@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Server Metrics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #303030;
+            margin: 0;
+            padding: 0px;
+            color: #333;
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+        }
+
+        .metric {
+            margin: 8px 0;
+            font-size: 1.1em;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 6px 0;
+            font-size: 1.05em;
+        }
+
+        .status-active {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-inactive {
+            color: gray;
+            font-weight: bold;
+        }
+
+        .status-failed, .status-error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .container {
+            /*max-width: 800px;*/
+            margin: auto;
+            padding-left: 16px;
+            padding-top: 16px;
+            padding-bottom: 16px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* allows wrapping to new rows */
+            gap: 16px; /* spacing between boxes */
+        }
+
+        .box {
+            color: white;
+            background: #181818;
+            width: 315px;
+            height: 315px;
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .box > strong {
+                padding: 8px;
+            }
+
+        .childbox {
+            background: #181818;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 8px;
+            border: 1px solid #333; /* optional: visual separation */
+        }
+
+        .childcontainer {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 8px;
+            margin: 0px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="box">
+            <strong><span id="hostname">Loading Server...</span></strong>
+            <div class="childcontainer">
+                <div class="childbox">Uptime:<br /> <metric id="uptime"></metric></div>
+                <div class="childbox">CPU:<br /> <span><metric id="cpu"></metric>%</span></div>
+                <div class="childbox">Memory:<br /> <span><metric id="ram"></metric>%</span></div>
+                <div class="childbox">Disk:<br /> <span><metric id="disk"></metric>%</span></div>
+            </div>
+        </div>
+        <div class="box">Apple</div>
+        <div class="box">TrueNas</div>
+    </div>
+
+    <script>
+        let cpuChart;
+        let hostname;
+    async function loadHostName() {
+      try {
+        const response = await fetch("/api/hostname");
+        const data = await response.json();
+        hostname = data.hostname;
+        document.getElementById("hostname").textContent = data.hostname;
+      } catch (err) {
+        document.getElementById("hostname").textContent = "Unavailable";
+        console.error(err);
+      }
+    }
+
+    function getStatusClass(status) {
+      if (status === "active") return "status-active";
+      if (status === "inactive") return "status-inactive";
+      if (status === "failed") return "status-failed";
+      return "status-error";
+    }
+
+    async function loadMetrics() {
+      try {
+        const response = await fetch(`/api/metrics?server=${encodeURIComponent(hostname)}`);
+        const data = await response.json();
+        const uptime = document.getElementById("uptime");
+        const ram = document.getElementById("ram");
+        const cpu = document.getElementById("cpu");
+        const disk = document.getElementById("disk");
+        const serviceList = Object.entries(data.services)
+          .map(([svc, status]) =>
+            `<li><b>${svc}</b>: <span class="${getStatusClass(status)}">${status}</span></li>`
+          ).join('');
+
+        cpu.innerHTML = `${data.cpu_percent}`;
+        ram.innerHTML = `${data.memory_percent}`;
+        disk.innerHTML = `${data.disk_percent}`;
+        uptime.innerHTML = `${data.uptime}`;
+
+      } catch (err) {
+        document.getElementById("error").innerHTML = "<p style='color:red;'>Error fetching metrics.</p>";
+        console.error(err);
+      }
+    }
+
+    async function renderChart() {
+      try {
+        const response = await fetch("/api/cpu-usage");
+        const data = await response.json();
+
+        const timestamps = data.map(point => point.timestamp).reverse();
+        const values = data.map(point => point.cpu_percent).reverse();
+
+        const ctx = document.getElementById("cpuChart").getContext("2d");
+
+        if (cpuChart) {
+          cpuChart.data.labels = timestamps;
+          cpuChart.data.datasets[0].data = values;
+          cpuChart.update();
+        } else {
+          cpuChart = new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: timestamps,
+              datasets: [{
+                label: `CPU Usage (latest: ${cpuperc}%)`,
+                data: values,
+                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                tension: 0.3
+              }]
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: 100
+                }
+              }
+            }
+          });
+        }
+      } catch (err) {
+        console.error("Failed to render chart:", err);
+      }
+    }
+    async function loadRsnap() {
+      try {
+        const response = await fetch("/api/rsnap");
+        const data = await response.json();
+        const out = document.getElementById("rsnap");
+        out.innerHTML = `
+          <div class="metric"><b>Hourly:</b> ${data.hourly}</div>
+          <div class="metric"><b>Daily:</b> ${data.daily}</div>
+          <div class="metric"><b>Weekly:</b> ${data.weekly}</div>
+          <div class="metric"><b>Monthly:</b> ${data.monthly}</div>
+        `;
+      } catch (err) {
+        document.getElementById("output").innerHTML = "<p style='color:red;'>Error fetching rsnap metrics.</p>";
+        console.error(err);
+      }
+    }
+
+    let cpuperc;
+    loadRsnap();
+    loadHostName();
+    loadMetrics();
+    renderChart();
+    setInterval(loadRsnap, 60 * 60 * 1000);
+    setInterval(loadMetrics, 1000);
+    setInterval(renderChart, 5 * 60 * 1000);
+    </script>
+</body>
+</html>

@@ -1,4 +1,5 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template, request
+import os
 from flask_cors import CORS
 import psutil
 import platform
@@ -7,19 +8,28 @@ import pyodbc
 import datetime
 from metric_modules import get_cpu_usage, get_rsnapshots, get_uptime, get_all_services_status, get_service_status
 
-DB_CONFIG = {
-    'server': 'localhost',
-    'database': 'ServerMonitor',
-    'username': 'ServerMonitor',
-    'password': '*Server*Star*',
-    'driver': '{ODBC Driver 18 for SQL Server}',
-    'port': 1433
-}
-
 app = Flask(__name__)
 CORS(app)  # Enable CORS
 
-SYSTEMCTL = "/usr/bin/systemctl"  # full path to systemctl
+#Need to move database configuration to a separate config file
+DB_CONFIG = {
+    'server': 'home.stephensdev.com',
+    'database': 'ServerMonitor',
+    'username': 'ServerMonitor',
+    'password': '*Server*Star*',
+    'driver': '{ODBC Driver 17 for SQL Server}',
+    'port': 1433
+}
+
+sql_server_drivers = [d for d in pyodbc.drivers() if "SQL Server" in d]
+if not sql_server_drivers:
+    raise RuntimeError("No SQL Server ODBC driver found. Please install one.")
+DB_CONFIG['driver'] = f'{{{sql_server_drivers[0]}}}'
+
+#Default Web App Page
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 def get_db_connection():
     connection_string = (
@@ -32,20 +42,37 @@ def get_db_connection():
     )
     return pyodbc.connect(connection_string)
 
-services = ['apache2', 'mysql', 'docker', 'bedrock-server']
-
 @app.route('/api/metrics', methods=['GET'])
 def get_metrics():
+    server = request.args.get('server')
     uptime = get_uptime()
-    #service_status = {svc: get_service_status(svc) for svc in services}
     service_status = get_all_services_status()
     cpu_percent = get_cpu_usage()
 
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    print(f'Fetching metrics for server: {server}')
+    cursor.execute('EXECUTE [dbo].[GetServerMetrics] @server=?', (server,))
+    columns = [column[0] for column in cursor.description]
+    rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
+    conn.close();
+
+    if not rows:
+        data = {
+            'uptime': uptime,
+            'cpu_percent': -1,
+            'memory_percent': -1,
+            'disk_percent': -1,
+            'services': service_status,
+        }
+        # No rows returned
+        return jsonify(data)
+
     data = {
         'uptime': uptime,
-        'cpu_percent': cpu_percent,
-        'memory_percent': psutil.virtual_memory().percent,
-        'disk_percent': psutil.disk_usage('/').percent,
+        'cpu_percent': rows[0]['CPUUsage'],
+        'memory_percent': rows[0]['RAMUsage'],
+        'disk_percent': rows[0]['DiskUsage'],
         'services': service_status,
     }
     return jsonify(data)

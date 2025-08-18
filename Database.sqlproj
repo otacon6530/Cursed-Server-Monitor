@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>ServerMonitorDB</Name>
+    <Name>Database</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{722b355f-0999-482c-a00c-265c44368351}</ProjectGuid>
@@ -63,6 +63,7 @@
     <Folder Include="Security\" />
     <Folder Include="log\procedures" />
     <Folder Include="scripts" />
+    <Folder Include="dbo\Procedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Server.sql" />
@@ -74,6 +75,7 @@
     <Build Include="log\tables\Event.sql" />
     <Build Include="log\procedures\ApplyRetention.sql" />
     <Build Include="dbo\Tables\AdminLogRetention.sql" />
+    <Build Include="dbo\Procedures\GetServerMetrics.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ServerMonitor.publish.xml" />
