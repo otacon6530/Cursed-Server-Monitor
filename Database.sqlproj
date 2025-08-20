@@ -76,6 +76,7 @@
     <Build Include="log\procedures\ApplyRetention.sql" />
     <Build Include="dbo\Tables\AdminLogRetention.sql" />
     <Build Include="dbo\Procedures\GetServerMetrics.sql" />
+    <Build Include="dbo\Procedures\SetServerMetrics.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ServerMonitor.publish.xml" />
