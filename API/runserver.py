@@ -62,6 +62,7 @@ def get_metrics():
             'memory_percent': -1,
             'disk_percent': -1,
             'services': service_status,
+            'status': "pending",
         }
         # No rows returned
         return jsonify(data)
@@ -72,6 +73,7 @@ def get_metrics():
         'memory_percent': rows[0]['RAMUsage'],
         'disk_percent': rows[0]['DiskUsage'],
         'services': service_status,
+        'status': rows[0]['Status'],
     }
     return jsonify(data)
 

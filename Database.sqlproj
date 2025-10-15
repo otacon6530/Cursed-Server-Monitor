@@ -64,6 +64,7 @@
     <Folder Include="log\procedures" />
     <Folder Include="scripts" />
     <Folder Include="dbo\Procedures" />
+    <Folder Include="dbo\Trigger" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Server.sql" />
@@ -77,6 +78,7 @@
     <Build Include="dbo\Tables\AdminLogRetention.sql" />
     <Build Include="dbo\Procedures\GetServerMetrics.sql" />
     <Build Include="dbo\Procedures\SetServerMetrics.sql" />
+    <Build Include="dbo\Trigger\trg_Server_LastModified.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ServerMonitor.publish.xml" />

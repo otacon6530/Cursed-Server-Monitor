@@ -6,5 +6,8 @@
 	[CPUDesc] VARCHAR(100) NULL,
 	[GPUDesc] VARCHAR(200) NULL,
 	[RAMDesc] VARCHAR(100) NULL,
-	[NetworkDesc] VARCHAR(500) NULL
+	[NetworkDesc] VARCHAR(500) NULL,
+	[LastModified] DATETIME NULL,
+	[Status] AS (CASE WHEN dateadd(s,-8,GETDATE()) < [LastModified] THEN 'Active' ELSE 'Inactive' END) 
 )
+
