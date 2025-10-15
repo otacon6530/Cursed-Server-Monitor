@@ -97,132 +97,160 @@
 </head>
 <body>
     <div class="container">
-        <div class="box">
-            <strong><span id="hostname">Loading Server...</span></strong>
-            <div class="childcontainer">
-                <div class="childbox">Uptime:<br /> <metric id="uptime"></metric></div>
-                <div class="childbox">CPU:<br /> <span><metric id="cpu"></metric>%</span></div>
-                <div class="childbox">Memory:<br /> <span><metric id="ram"></metric>%</span></div>
-                <div class="childbox">Disk:<br /> <span><metric id="disk"></metric>%</span></div>
-            </div>
-        </div>
-        <div class="box">Apple</div>
-        <div class="box">TrueNas</div>
     </div>
 
     <script>
         let cpuChart;
-        let hostname;
-    async function loadHostName() {
-      try {
-        const response = await fetch("/api/hostname");
-        const data = await response.json();
-        hostname = data.hostname;
-        document.getElementById("hostname").textContent = data.hostname;
-      } catch (err) {
-        document.getElementById("hostname").textContent = "Unavailable";
-        console.error(err);
-      }
-    }
-
-    function getStatusClass(status) {
-      if (status === "active") return "status-active";
-      if (status === "inactive") return "status-inactive";
-      if (status === "failed") return "status-failed";
-      return "status-error";
-    }
-
-    async function loadMetrics() {
-      try {
-        const response = await fetch(`/api/metrics?server=${encodeURIComponent(hostname)}`);
-        const data = await response.json();
-        const uptime = document.getElementById("uptime");
-        const ram = document.getElementById("ram");
-        const cpu = document.getElementById("cpu");
-        const disk = document.getElementById("disk");
-        const serviceList = Object.entries(data.services)
-          .map(([svc, status]) =>
-            `<li><b>${svc}</b>: <span class="${getStatusClass(status)}">${status}</span></li>`
-          ).join('');
-
-        cpu.innerHTML = `${data.cpu_percent}`;
-        ram.innerHTML = `${data.memory_percent}`;
-        disk.innerHTML = `${data.disk_percent}`;
-        uptime.innerHTML = `${data.uptime}`;
-
-      } catch (err) {
-        document.getElementById("error").innerHTML = "<p style='color:red;'>Error fetching metrics.</p>";
-        console.error(err);
-      }
-    }
-
-    async function renderChart() {
-      try {
-        const response = await fetch("/api/cpu-usage");
-        const data = await response.json();
-
-        const timestamps = data.map(point => point.timestamp).reverse();
-        const values = data.map(point => point.cpu_percent).reverse();
-
-        const ctx = document.getElementById("cpuChart").getContext("2d");
-
-        if (cpuChart) {
-          cpuChart.data.labels = timestamps;
-          cpuChart.data.datasets[0].data = values;
-          cpuChart.update();
-        } else {
-          cpuChart = new Chart(ctx, {
-            type: "line",
-            data: {
-              labels: timestamps,
-              datasets: [{
-                label: `CPU Usage (latest: ${cpuperc}%)`,
-                data: values,
-                borderColor: "rgba(75, 192, 192, 1)",
-                backgroundColor: "rgba(75, 192, 192, 0.2)",
-                tension: 0.3
-              }]
-            },
-            options: {
-              responsive: true,
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  max: 100
-                }
-              }
-            }
-          });
+        let servers;
+        async function getServers() {
+            const response = await fetch("/api/get-servers");
+            servers = await response.json();
         }
-      } catch (err) {
-        console.error("Failed to render chart:", err);
-      }
-    }
-    async function loadRsnap() {
-      try {
-        const response = await fetch("/api/rsnap");
-        const data = await response.json();
-        const out = document.getElementById("rsnap");
-        out.innerHTML = `
-          <div class="metric"><b>Hourly:</b> ${data.hourly}</div>
-          <div class="metric"><b>Daily:</b> ${data.daily}</div>
-          <div class="metric"><b>Weekly:</b> ${data.weekly}</div>
-          <div class="metric"><b>Monthly:</b> ${data.monthly}</div>
-        `;
-      } catch (err) {
-        document.getElementById("output").innerHTML = "<p style='color:red;'>Error fetching rsnap metrics.</p>";
-        console.error(err);
-      }
-    }
 
-    let cpuperc;
-    loadRsnap();
-    loadHostName();
-    loadMetrics();
-    renderChart();
-    setInterval(loadRsnap, 60 * 60 * 1000);
-    setInterval(loadMetrics, 1000);
-    setInterval(renderChart, 5 * 60 * 1000);
+
+        function getStatusClass(status) {
+            if (status === "active") return "status-active";
+            if (status === "inactive") return "status-inactive";
+            if (status === "failed") return "status-failed";
+            return "status-error";
+        }
+
+        async function loadMetrics() {
+            try {
+                const response = await fetch(`/api/metrics?server=${encodeURIComponent(servers[0])}`);
+                const data = await response.json();
+                const uptime = document.getElementById("uptime");
+                const ram = document.getElementById("ram");
+                const cpu = document.getElementById("cpu");
+                const disk = document.getElementById("disk");
+                const serviceList = Object.entries(data.services)
+                    .map(([svc, status]) =>
+                        `<li><b>${svc}</b>: <span class="${getStatusClass(status)}">${status}</span></li>`
+                    ).join('');
+
+                cpu.innerHTML = `${data.cpu_percent}`;
+                ram.innerHTML = `${data.memory_percent}`;
+                disk.innerHTML = `${data.disk_percent}`;
+                uptime.innerHTML = `${data.uptime}`;
+
+            } catch (err) {
+                document.getElementById("error").innerHTML = "<p style='color:red;'>Error fetching metrics.</p>";
+                console.error(err);
+            }
+        }
+
+        async function renderChart() {
+            try {
+                const response = await fetch("/api/cpu-usage");
+                const data = await response.json();
+
+                const timestamps = data.map(point => point.timestamp).reverse();
+                const values = data.map(point => point.cpu_percent).reverse();
+
+                const ctx = document.getElementById("cpuChart").getContext("2d");
+
+                if (cpuChart) {
+                    cpuChart.data.labels = timestamps;
+                    cpuChart.data.datasets[0].data = values;
+                    cpuChart.update();
+                } else {
+                    cpuChart = new Chart(ctx, {
+                        type: "line",
+                        data: {
+                            labels: timestamps,
+                            datasets: [{
+                                label: `CPU Usage (latest: ${cpuperc}%)`,
+                                data: values,
+                                borderColor: "rgba(75, 192, 192, 1)",
+                                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to render chart:", err);
+            }
+        }
+        async function loadRsnap() {
+            try {
+                const response = await fetch("/api/rsnap");
+                const data = await response.json();
+                const out = document.getElementById("rsnap");
+                out.innerHTML = `
+              <div class="metric"><b>Hourly:</b> ${data.hourly}</div>
+              <div class="metric"><b>Daily:</b> ${data.daily}</div>
+              <div class="metric"><b>Weekly:</b> ${data.weekly}</div>
+              <div class="metric"><b>Monthly:</b> ${data.monthly}</div>
+            `;
+            } catch (err) {
+                document.getElementById("output").innerHTML = "<p style='color:red;'>Error fetching rsnap metrics.</p>";
+                console.error(err);
+            }
+        }
+
+        let cpuperc;
+        //loadRsnap();
+        //loadMetrics();
+        //renderChart();
+        //setInterval(loadRsnap, 60 * 60 * 1000);
+        //setInterval(loadMetrics, 1000);
+        //setInterval(renderChart, 5 * 60 * 1000);
+
+        getServers();
+
+        function refreshAllServerMetrics() {
+            servers.forEach(server => loadMetricsForServer(server));
+        }
+
+        async function renderServerBoxes() {
+            const response = await fetch("/api/get-servers");
+            const servers = await response.json();
+            const container = document.querySelector(".container");
+            container.innerHTML = ""; // Clear existing boxes
+
+            servers.forEach(server => {
+                const box = document.createElement("div");
+                box.className = "box";
+                box.innerHTML = `
+                <strong><span>${server}</span></strong>
+                <div class="childcontainer">
+                    <div class="childbox">Uptime:<br /> <metric id="uptime-${server}"></metric></div>
+                    <div class="childbox">CPU:<br /> <span><metric id="cpu-${server}"></metric>%</span></div>
+                    <div class="childbox">Memory:<br /> <span><metric id="ram-${server}"></metric>%</span></div>
+                    <div class="childbox">Disk:<br /> <span><metric id="disk-${server}"></metric>%</span></div>
+                </div>
+                `;
+                container.appendChild(box);
+                // Optionally, call a function to load metrics for each server
+                loadMetricsForServer(server);
+            });
+        }
+
+        async function loadMetricsForServer(server) {
+        try {
+            const response = await fetch(`/api/metrics?server=${encodeURIComponent(server)}`);
+            const data = await response.json();
+            document.getElementById(`uptime-${server}`).textContent = data.uptime;
+            document.getElementById(`cpu-${server}`).textContent = data.cpu_percent;
+            document.getElementById(`ram-${server}`).textContent = data.memory_percent;
+            document.getElementById(`disk-${server}`).textContent = data.disk_percent;
+        } catch (err) {
+                // Handle error if needed
+            }
+}
+
+        renderServerBoxes();
+        setInterval(refreshAllServerMetrics, 5000); // Refresh every 5 seconds
     </script>
 </body>
 </html>

@@ -98,6 +98,18 @@ def get_cpu_usage_history(limit=10):
     ]
     return jsonify(data)
 
+@app.route('/api/get-servers', methods=['GET'])
+def get_servers():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT [server] FROM dbo.server')
+    rows = cursor.fetchall()
+    conn.close()
+
+    # Convert to a list of server names
+    servers = [row[0] for row in rows]
+    return jsonify(servers)
+
 
 @app.route('/api/hostname', methods=['GET'])
 def get_hostname():
