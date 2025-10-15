@@ -45,9 +45,7 @@ def get_db_connection():
 @app.route('/api/metrics', methods=['GET'])
 def get_metrics():
     server = request.args.get('server')
-    uptime = get_uptime()
     service_status = get_all_services_status()
-    cpu_percent = get_cpu_usage()
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -59,7 +57,7 @@ def get_metrics():
 
     if not rows:
         data = {
-            'uptime': uptime,
+            'uptime': "",
             'cpu_percent': -1,
             'memory_percent': -1,
             'disk_percent': -1,
@@ -69,7 +67,7 @@ def get_metrics():
         return jsonify(data)
 
     data = {
-        'uptime': uptime,
+        'uptime': rows[0]['Uptime'],
         'cpu_percent': rows[0]['CPUUsage'],
         'memory_percent': rows[0]['RAMUsage'],
         'disk_percent': rows[0]['DiskUsage'],
@@ -93,7 +91,7 @@ def get_cpu_usage_history(limit=10):
 
     data = [
         {
-            'timestamp': row[0].strftime('%Y-%m-%d %H:%M:%S'),
+            'timestamp': "", #row[0].strftime('%Y-%m-%d %H:%M:%S'),
             'cpu_percent': row[1]
         }
         for row in rows

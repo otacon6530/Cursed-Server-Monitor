@@ -3,7 +3,8 @@
 AS
 	SELECT Top 1 b.[RAMUsage],
 		   b.[CPUUsage],
-	       b.[DiskUsage]
+	       b.[DiskUsage],
+		   a.[Uptime]
 	FROM [dbo].[Server] a
 		INNER JOIN [log].[Server] b 
 			ON a.[ServerId] = b.[ServerId]
