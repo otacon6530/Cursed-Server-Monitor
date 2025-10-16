@@ -13,6 +13,10 @@ AS
 	FROM [dbo].[Server] a
 	WHERE a.[Server] = @server;
 
+	if (@@ROWCOUNT=0)
+		INSERT INTO [dbo].[Server](Server)
+		VALUES (@server)
+
 	UPDATE [dbo].[Server] 
 	Set [Uptime] = @Uptime
 	WHERE [Server] = @server;
