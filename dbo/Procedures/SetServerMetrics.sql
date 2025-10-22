@@ -1,9 +1,9 @@
 ﻿CREATE PROCEDURE [dbo].[SetServerMetrics]
 	@server VARCHAR(100),
-	@RAMUsage INT = null,
-	@CPUUsage INT = null,
-	@DiskUsage INT = null,
-	@Uptime VARCHAR(100) = null
+	@RAMUsage INT = -1,
+	@CPUUsage INT = -1,
+	@DiskUsage INT = -1,
+	@Uptime VARCHAR(100) = ''
 AS
 	INSERT INTO [log].[Server] ([ServerId], [RAMUsage], [CPUUsage], [DiskUsage])
 	SELECT a.ServerId

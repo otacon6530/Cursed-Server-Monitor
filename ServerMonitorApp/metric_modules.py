@@ -1,6 +1,7 @@
 # metric_modules.py
 import psutil
 import subprocess
+import platform
 import re
 import datetime
 import sys
@@ -145,3 +146,9 @@ def execute_sql_query(query, params=None):
     except Exception as ex:
         print("General error:", ex)
     return None
+
+def ping(host):
+    param = '-n' if platform.system().lower() == 'windows' else '-c'
+    command = ['ping', param, '1', host]
+    result = subprocess.run(command, capture_output=True, text=True)
+    return result.returncode == 0  # True if ping succeeded

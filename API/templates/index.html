@@ -3,154 +3,135 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Server Metrics Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Widget Board</title>
     <style>
         body {
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             background-color: #303030;
             margin: 0;
-            padding: 0px;
-            color: #333;
-        }
-
-        h1, h2 {
-            color: #2c3e50;
-        }
-
-        .metric {
-            margin: 8px 0;
-            font-size: 1.1em;
-        }
-
-        ul {
-            list-style-type: none;
             padding: 0;
+            color: #fff;
         }
 
-        li {
-            padding: 6px 0;
-            font-size: 1.05em;
-        }
-
-        .status-active {
-            color: green;
-            font-weight: bold;
-        }
-
-        .status-inactive {
-            color: gray;
-            font-weight: bold;
-        }
-
-        .status-failed, .status-error {
-            color: red;
-            font-weight: bold;
-        }
-
-        .container {
-            /*max-width: 800px;*/
-            margin: auto;
-            padding-left: 16px;
-            padding-top: 16px;
-            padding-bottom: 16px;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap; /* allows wrapping to new rows */
-            gap: 16px; /* spacing between boxes */
-        }
-
-        .box {
-            color: white;
-            background: #181818;
-            width: 315px;
-            height: 315px;
-            border-radius: 8px;
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-        }
-
-            .box > strong {
-                padding: 8px;
-            }
-
-        .childbox {
-            background: #181818;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            border-radius: 8px;
-            border: 1px solid #333; /* optional: visual separation */
-        }
-
-        .childcontainer {
-            flex: 1;
+        .board-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 8px;
-            margin: 0px;
+            grid-template-columns: repeat(auto-fill, 140px);
+            grid-auto-rows: 140px;
+            gap: 16px;
+            padding: 24px;
+            justify-content: center;
+        }
+
+        .widget {
+            background: #181818;
+            border-radius: 8px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 12px;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            grid-column: span 1;
+            grid-row: span 1;
+        }
+
+        .widget-header {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .widget-remove {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: #444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 2px 8px;
+        }
+
+        #add-widget-btn {
+            margin: 24px auto 0 auto;
+            display: block;
+            background: #0078d4;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-size: 1rem;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-    </div>
+    <button id="add-widget-btn">Add Widget</button>
+    <div class="board-container" id="board"></div>
 
     <script>
-        
-        async function getServers() {
-            const response = await fetch("/api/get-servers");
-            servers = await response.json();
+        // Widget configuration stored in localStorage
+        function getWidgetConfig() {
+            return JSON.parse(localStorage.getItem('widgetBoardConfig') || '[]');
         }
-        function refreshAllServerMetrics() {
-            servers.forEach(server => loadMetricsForServer(server));
+        function saveWidgetConfig(config) {
+            localStorage.setItem('widgetBoardConfig', JSON.stringify(config));
         }
 
-        async function renderServerBoxes() {
-            const response = await fetch("/api/get-servers");
-            const servers = await response.json();
-            const container = document.querySelector(".container");
-            container.innerHTML = ""; // Clear existing boxes
-
-            servers.forEach(server => {
-                const box = document.createElement("div");
-                box.className = "box";
-                box.innerHTML = `
-                <strong><span>${server} - <span id="status-${server}"></span></span></strong>
-                <div class="childcontainer">
-                    <div class="childbox">Uptime:<br /> <metric id="uptime-${server}"></metric></div>
-                    <div class="childbox">CPU:<br /> <span><metric id="cpu-${server}"></metric>%</span></div>
-                    <div class="childbox">Memory:<br /> <span><metric id="ram-${server}"></metric>%</span></div>
-                    <div class="childbox">Disk:<br /> <span><metric id="disk-${server}"></metric>%</span></div>
-                </div>
-                `;
-                container.appendChild(box);
-                // Optionally, call a function to load metrics for each server
-                loadMetricsForServer(server);
+        function renderBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+            const config = getWidgetConfig();
+            config.forEach((widget, idx) => {
+                const widgetDiv = document.createElement('div');
+                widgetDiv.className = 'widget';
+                // Set grid span based on widget.size (default 1)
+                const colSpan = widget.cols || 1;
+                const rowSpan = widget.rows || 1;
+                widgetDiv.style.gridColumn = `span ${colSpan}`;
+                widgetDiv.style.gridRow = `span ${rowSpan}`;
+                widgetDiv.innerHTML = `
+                        <div class="widget-header">${widget.title}</div>
+                        <button class="widget-remove" title="Remove" onclick="removeWidget(${idx})">&times;</button>
+                        <div style="font-size:0.95rem;overflow:auto;">${widget.content}</div>
+                    `;
+                board.appendChild(widgetDiv);
             });
         }
 
-        async function loadMetricsForServer(server) {
-            try {
-                const response = await fetch(`/api/metrics?server=${encodeURIComponent(server)}`);
-                const data = await response.json();
-                document.getElementById(`uptime-${server}`).textContent = data.uptime;
-                document.getElementById(`cpu-${server}`).textContent = data.cpu_percent;
-                document.getElementById(`ram-${server}`).textContent = data.memory_percent;
-                document.getElementById(`disk-${server}`).textContent = data.disk_percent;
-                document.getElementById(`status-${server}`).textContent = data.status;
-            } catch (err) {
-                // Handle error if needed
-            }
+        function addWidget() {
+            const title = prompt('Widget Title:', 'New Widget');
+            if (!title) return;
+            const content = prompt('Widget Content:', 'This is a widget.');
+            let cols = parseInt(prompt('How many columns should this widget span?', '1'), 10);
+            let rows = parseInt(prompt('How many rows should this widget span?', '1'), 10);
+            if (isNaN(cols) || cols < 1) cols = 1;
+            if (isNaN(rows) || rows < 1) rows = 1;
+            const config = getWidgetConfig();
+            config.push({ title, content, cols, rows });
+            saveWidgetConfig(config);
+            renderBoard();
         }
 
-        let servers;
-        getServers();
-        renderServerBoxes();
-        setInterval(refreshAllServerMetrics, 5000); // Refresh every 5 seconds
+        function removeWidget(idx) {
+            const config = getWidgetConfig();
+            config.splice(idx, 1);
+            saveWidgetConfig(config);
+            renderBoard();
+        }
+
+        document.getElementById('add-widget-btn').onclick = addWidget;
+        window.removeWidget = removeWidget;
+
+        // Initial render
+        renderBoard();
     </script>
 </body>
 </html>
