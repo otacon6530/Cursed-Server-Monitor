@@ -127,15 +127,6 @@
             margin: 0px;
         }
 
-        .childcontainer1 {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1fr;
-            grid-template-rows: 1fr;
-            gap: 8px;
-            margin: 0px;
-        }
-
         /* Responsive: abandon grid for small screens */
         @media (max-width: 600px) {
             .board-container {
@@ -261,7 +252,7 @@
                         `;
             if (title == 'share.stephensdev.com' || title == 'print.stephensdev.com') {
                 temp = `
-                        <strong><span id = "status-${title}-parent"></span><span class="widget-header">${title}</span><button class="widget-remove" title="Remove" onclick="removeWidget(${idx})">&times;</button></strong> <br />
+                        <strong><span id = "status-${title}-parent"></span><span class="widget-header">${title}</span><button class="widget-remove" title="Remove" onclick="removeWidget(${idx})">&times;</button></strong>
                         `;
             } 
             return temp;
@@ -432,8 +423,22 @@
         // Initial render
         renderBoard();
 
-        // Re-render on resize to handle layout switch
-        window.addEventListener('resize', renderBoard);
+        let lastWidth = window.innerWidth;
+        let lastHeight = window.innerHeight;
+        let resizeTimeout;
+
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                const widthChanged = window.innerWidth !== lastWidth;
+                const heightChanged = Math.abs(window.innerHeight - lastHeight) > 50; // Only rerender if height changes by >50px
+                if (widthChanged || heightChanged) {
+                    lastWidth = window.innerWidth;
+                    lastHeight = window.innerHeight;
+                    renderBoard();
+                }
+            }, 150);
+        });
     </script>
 </body>
 </html>
