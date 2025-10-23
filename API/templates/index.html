@@ -200,12 +200,15 @@
             if (data.status == 'Active') {
                 try {
                     document.getElementById(`status-${server}-parent`).classList.add('active');
+                    document.getElementById(`status-${server}-parent`).classList.remove('inactive');
                 } catch (err) {
                     // Handle error if needed
                 }
             } else {
                 try {
+                    document.getElementById(`status-${server}-parent`).classList.add('inactive');
                     document.getElementById(`status-${server}-parent`).classList.remove('active');
+                    
                 } catch (err) {
                     // Handle error if needed
                 }
