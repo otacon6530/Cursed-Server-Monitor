@@ -8,7 +8,7 @@
 	[RAMDesc] VARCHAR(100) NULL,
 	[NetworkDesc] VARCHAR(500) NULL,
 	[LastModified] DATETIME NULL,
-	[Status] AS (CASE WHEN dateadd(s,-8,GETDATE()) < [LastModified] THEN 'Active' ELSE 'Inactive' END),
+	[Status] AS (CASE WHEN dateadd(s,-30,GETDATE()) < [LastModified] THEN 'Active' ELSE 'Inactive' END),
 	[ClientServer] VARCHAR(100) NULL,
 	[ClientVersion] VARCHAR(25) NULL
 )
