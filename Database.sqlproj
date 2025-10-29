@@ -79,6 +79,7 @@
     <Build Include="dbo\Procedures\GetServerMetrics.sql" />
     <Build Include="dbo\Procedures\SetServerMetrics.sql" />
     <Build Include="dbo\Trigger\trg_Server_LastModified.sql" />
+    <Build Include="dbo\Procedures\SetService.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ServerMonitor.publish.xml" />

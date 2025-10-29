@@ -24,15 +24,33 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="metric_modules.py" />
+    <Compile Include="commands\start.py" />
+    <Compile Include="functions\executeSQLQuery.py" />
+    <Compile Include="functions\pushMetricsForLocal.py" />
+    <Compile Include="functions\pushMetricsForURL.py" />
+    <Compile Include="functions\ping.py" />
+    <Compile Include="functions\getUpTime.py" />
+    <Compile Include="functions\getServicesWithStatus.py" />
+    <Compile Include="functions\getDiskUsage.py" />
+    <Compile Include="functions\getCPUUsage.py" />
+    <Compile Include="functions\getRAMUsage.py" />
     <Compile Include="servmon.py" />
-    <Compile Include="linux.py" />
-    <Compile Include="servmon_service.py" />
     <Compile Include="start.py" />
-    <Compile Include="windows.py" />
+    <Compile Include="commands\test.py" />
+    <Compile Include="tests\test_ExecuteSQLQuery.py" />
+    <Compile Include="tests\test_GetServicesWithStatus.py" />
+    <Compile Include="tests\test_GetUpTime.py" />
+    <Compile Include="tests\test_GetRAMUsage.py" />
+    <Compile Include="tests\test_GetDiskUsage.py" />
+    <Compile Include="tests\test_GetCPUUsage.py" />
+    <Compile Include="tests\test_pushMetricsForLocal.py" />
+    <Compile Include="tests\__init__.py" />
+    <Compile Include="tests\test_ping.py" />
+    <Compile Include="tests\test_PushMetricsForURL.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="build.ps1" />
+    <Content Include="README.md" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -45,6 +63,11 @@
       <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
       <Architecture>X64</Architecture>
     </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="commands\" />
+    <Folder Include="functions\" />
+    <Folder Include="tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
