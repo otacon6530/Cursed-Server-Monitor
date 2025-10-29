@@ -26,6 +26,7 @@
   <ItemGroup>
     <Compile Include="commands\start.py" />
     <Compile Include="functions\executeSQLQuery.py" />
+    <Compile Include="functions\pushServicesForLocal.py" />
     <Compile Include="functions\pushMetricsForLocal.py" />
     <Compile Include="functions\pushMetricsForURL.py" />
     <Compile Include="functions\ping.py" />
@@ -44,6 +45,7 @@
     <Compile Include="tests\test_GetDiskUsage.py" />
     <Compile Include="tests\test_GetCPUUsage.py" />
     <Compile Include="tests\test_pushMetricsForLocal.py" />
+    <Compile Include="tests\test_pushServicesForLocal.py" />
     <Compile Include="tests\__init__.py" />
     <Compile Include="tests\test_ping.py" />
     <Compile Include="tests\test_PushMetricsForURL.py" />

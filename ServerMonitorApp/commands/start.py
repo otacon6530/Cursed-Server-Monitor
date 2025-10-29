@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
 import click
-from functions.getServicesWithStatus import getServicesWithStatus
-from functions.executeSQLQuery import executeSQLQuery
 from functions.pushMetricsForURL import pushMetricsForURL
 from functions.pushMetricsForLocal import pushMetricsForLocal
+from functions.pushServicesForLocal import pushServicesForLocal
 import time
 
 @click.command()
@@ -17,5 +16,6 @@ def start(url):
             pushMetricsForURL(url)
         else:
             pushMetricsForLocal()
+            pushServicesForLocal()
         while datetime.now() < future_time:
             time.sleep(1)

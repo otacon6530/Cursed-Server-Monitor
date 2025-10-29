@@ -2,7 +2,6 @@ from functions.getCPUUsage import getCPUUsage
 from functions.getDiskUsage import getDiskUsage
 from functions.getRAMUsage import getRAMUsage
 from functions.getUpTime import getUpTime
-from functions.getServicesWithStatus import getServicesWithStatus
 from functions.executeSQLQuery import executeSQLQuery
 import platform
 
@@ -18,13 +17,3 @@ def pushMetricsForLocal():
     )
     params = (server, ram, cpu, disk, uptime)
     executeSQLQuery(query, params)
-    services = getServicesWithStatus()
-    for service in services:
-        if service['name'] == '[EXCEPTION]':
-            continue
-        query = (
-            "EXECUTE [dbo].[SetService] "
-            "@server = ?, @Service = ?, @Status = ?;"
-        )
-        params = (server, service['name'], service['status'])
-        executeSQLQuery(query, params)

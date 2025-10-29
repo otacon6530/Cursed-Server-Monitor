@@ -3255,10 +3255,9 @@ imports:
     <a href="#click">click</a>
  &#8226;   <a href="#commands">commands</a>
  &#8226;   <a href="#datetime">datetime</a>
- &#8226;   <a href="#functions.executeSQLQuery">functions.executeSQLQuery</a>
- &#8226;   <a href="#functions.getServicesWithStatus">functions.getServicesWithStatus</a>
  &#8226;   <a href="#functions.pushMetricsForLocal">functions.pushMetricsForLocal</a>
  &#8226;   <a href="#functions.pushMetricsForURL">functions.pushMetricsForURL</a>
+ &#8226;   <a href="#functions.pushServicesForLocal">functions.pushServicesForLocal</a>
  &#8226;   <a href="#time">time</a>
 
   </div>
@@ -3292,6 +3291,7 @@ imports:
  &#8226;   <a href="#tests.test_PushMetricsForURL">tests.test_PushMetricsForURL</a>
  &#8226;   <a href="#tests.test_ping">tests.test_ping</a>
  &#8226;   <a href="#tests.test_pushMetricsForLocal">tests.test_pushMetricsForLocal</a>
+ &#8226;   <a href="#tests.test_pushServicesForLocal">tests.test_pushServicesForLocal</a>
  &#8226;   <a href="#unittest">unittest</a>
 
   </div>
@@ -6860,6 +6860,7 @@ imported by:
  &#8226;   <a href="#functions.ping">functions.ping</a>
  &#8226;   <a href="#functions.pushMetricsForLocal">functions.pushMetricsForLocal</a>
  &#8226;   <a href="#functions.pushMetricsForURL">functions.pushMetricsForURL</a>
+ &#8226;   <a href="#functions.pushServicesForLocal">functions.pushServicesForLocal</a>
 
   </div>
 
@@ -6876,9 +6877,9 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#commands.start">commands.start</a>
- &#8226;   <a href="#functions.pushMetricsForLocal">functions.pushMetricsForLocal</a>
+    <a href="#functions.pushMetricsForLocal">functions.pushMetricsForLocal</a>
  &#8226;   <a href="#functions.pushMetricsForURL">functions.pushMetricsForURL</a>
+ &#8226;   <a href="#functions.pushServicesForLocal">functions.pushServicesForLocal</a>
  &#8226;   <a href="#tests.test_ExecuteSQLQuery">tests.test_ExecuteSQLQuery</a>
 
   </div>
@@ -6955,9 +6956,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#commands.start">commands.start</a>
- &#8226;   <a href="#commands.test">commands.test</a>
- &#8226;   <a href="#functions.pushMetricsForLocal">functions.pushMetricsForLocal</a>
+    <a href="#commands.test">commands.test</a>
+ &#8226;   <a href="#functions.pushServicesForLocal">functions.pushServicesForLocal</a>
  &#8226;   <a href="#tests.test_GetServicesWithStatus">tests.test_GetServicesWithStatus</a>
 
   </div>
@@ -7015,7 +7015,6 @@ imports:
  &#8226;   <a href="#functions.getCPUUsage">functions.getCPUUsage</a>
  &#8226;   <a href="#functions.getDiskUsage">functions.getDiskUsage</a>
  &#8226;   <a href="#functions.getRAMUsage">functions.getRAMUsage</a>
- &#8226;   <a href="#functions.getServicesWithStatus">functions.getServicesWithStatus</a>
  &#8226;   <a href="#functions.getUpTime">functions.getUpTime</a>
  &#8226;   <a href="#platform">platform</a>
 
@@ -7045,6 +7044,26 @@ imports:
 imported by:
     <a href="#commands.start">commands.start</a>
  &#8226;   <a href="#tests.test_PushMetricsForURL">tests.test_PushMetricsForURL</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="functions.pushServicesForLocal"></a>
+  <a target="code" href="///G:/Dev/cloud/ServerMonitorApp/functions/pushServicesForLocal.py" type="text/plain"><tt>functions.pushServicesForLocal</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#functions">functions</a>
+ &#8226;   <a href="#functions.executeSQLQuery">functions.executeSQLQuery</a>
+ &#8226;   <a href="#functions.getServicesWithStatus">functions.getServicesWithStatus</a>
+ &#8226;   <a href="#platform">platform</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#commands.start">commands.start</a>
+ &#8226;   <a href="#tests.test_pushServicesForLocal">tests.test_pushServicesForLocal</a>
 
   </div>
 
@@ -9413,6 +9432,7 @@ imported by:
  &#8226;   <a href="#tests.test_PushMetricsForURL">tests.test_PushMetricsForURL</a>
  &#8226;   <a href="#tests.test_ping">tests.test_ping</a>
  &#8226;   <a href="#tests.test_pushMetricsForLocal">tests.test_pushMetricsForLocal</a>
+ &#8226;   <a href="#tests.test_pushServicesForLocal">tests.test_pushServicesForLocal</a>
  &#8226;   <a href="#threading">threading</a>
  &#8226;   <a href="#unittest.loader">unittest.loader</a>
  &#8226;   <a href="#unittest.main">unittest.main</a>
@@ -9573,6 +9593,7 @@ imported by:
  &#8226;   <a href="#functions.ping">functions.ping</a>
  &#8226;   <a href="#functions.pushMetricsForLocal">functions.pushMetricsForLocal</a>
  &#8226;   <a href="#functions.pushMetricsForURL">functions.pushMetricsForURL</a>
+ &#8226;   <a href="#functions.pushServicesForLocal">functions.pushServicesForLocal</a>
  &#8226;   <a href="#tests.test_GetServicesWithStatus">tests.test_GetServicesWithStatus</a>
  &#8226;   <a href="#uuid">uuid</a>
 
@@ -10731,6 +10752,7 @@ imported by:
  &#8226;   <a href="#tests.test_PushMetricsForURL">tests.test_PushMetricsForURL</a>
  &#8226;   <a href="#tests.test_ping">tests.test_ping</a>
  &#8226;   <a href="#tests.test_pushMetricsForLocal">tests.test_pushMetricsForLocal</a>
+ &#8226;   <a href="#tests.test_pushServicesForLocal">tests.test_pushServicesForLocal</a>
  &#8226;   <a href="#threading">threading</a>
  &#8226;   <a href="#tokenize">tokenize</a>
  &#8226;   <a href="#traceback">traceback</a>
@@ -10864,6 +10886,7 @@ imported by:
  &#8226;   <a href="#tests.test_PushMetricsForURL">tests.test_PushMetricsForURL</a>
  &#8226;   <a href="#tests.test_ping">tests.test_ping</a>
  &#8226;   <a href="#tests.test_pushMetricsForLocal">tests.test_pushMetricsForLocal</a>
+ &#8226;   <a href="#tests.test_pushServicesForLocal">tests.test_pushServicesForLocal</a>
 
   </div>
 
@@ -11039,6 +11062,27 @@ imported by:
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#functions.pushMetricsForLocal">functions.pushMetricsForLocal</a>
+ &#8226;   <a href="#os">os</a>
+ &#8226;   <a href="#sys">sys</a>
+ &#8226;   <a href="#tests">tests</a>
+ &#8226;   <a href="#unittest">unittest</a>
+ &#8226;   <a href="#unittest.mock">unittest.mock</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#commands.test">commands.test</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="tests.test_pushServicesForLocal"></a>
+  <a target="code" href="///G:/Dev/cloud/ServerMonitorApp/tests/test_pushServicesForLocal.py" type="text/plain"><tt>tests.test_pushServicesForLocal</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#functions.pushServicesForLocal">functions.pushServicesForLocal</a>
  &#8226;   <a href="#os">os</a>
  &#8226;   <a href="#sys">sys</a>
  &#8226;   <a href="#tests">tests</a>
@@ -11465,6 +11509,7 @@ imported by:
  &#8226;   <a href="#tests.test_PushMetricsForURL">tests.test_PushMetricsForURL</a>
  &#8226;   <a href="#tests.test_ping">tests.test_ping</a>
  &#8226;   <a href="#tests.test_pushMetricsForLocal">tests.test_pushMetricsForLocal</a>
+ &#8226;   <a href="#tests.test_pushServicesForLocal">tests.test_pushServicesForLocal</a>
  &#8226;   <a href="#unittest">unittest</a>
  &#8226;   <a href="#unittest._log">unittest._log</a>
  &#8226;   <a href="#unittest.async_case">unittest.async_case</a>
@@ -11631,6 +11676,7 @@ imports:
 imported by:
     <a href="#tests.test_PushMetricsForURL">tests.test_PushMetricsForURL</a>
  &#8226;   <a href="#tests.test_pushMetricsForLocal">tests.test_pushMetricsForLocal</a>
+ &#8226;   <a href="#tests.test_pushServicesForLocal">tests.test_pushServicesForLocal</a>
 
   </div>
 

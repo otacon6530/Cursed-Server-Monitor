@@ -1,4 +1,6 @@
 import click
+import unittest
+
 from functions.getRAMUsage import getRAMUsage
 from functions.getDiskUsage import getDiskUsage
 from functions.getCPUUsage import getCPUUsage
@@ -14,9 +16,8 @@ from tests.test_ping import TestPing
 from tests.test_GetServicesWithStatus import TestGetServicesWithStatus
 from tests.test_ExecuteSQLQuery import TestExecuteSQLQuery
 from tests.test_PushMetricsForURL import TestPushMetricsForURL
-from tests.test_pushMetricsForLocal import TestPushMetricsForLocal, pushMetricsForLocal
-
-import unittest
+from tests.test_pushMetricsForLocal import TestPushMetricsForLocal
+from tests.test_pushServicesForLocal import TestPushServicesForLocal
 
 @click.command()
 def test():
@@ -32,6 +33,7 @@ def test():
         if service['name'] == '[EXCEPTION]':
             continue
         print(f"{service['name']}: {service['status']}")
+
     # Run unit tests after prints
     print("\nRunning unit tests...")
     suite = unittest.TestSuite()
@@ -44,5 +46,6 @@ def test():
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestExecuteSQLQuery))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPushMetricsForURL))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPushMetricsForLocal))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPushServicesForLocal))
     runner = unittest.TextTestRunner()
     runner.run(suite)
