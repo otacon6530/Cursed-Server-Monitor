@@ -3,17 +3,8 @@ import click
 from functions.pushMetricsForURL import pushMetricsForURL
 from functions.pushMetricsForLocal import pushMetricsForLocal
 from functions.pushServicesForLocal import pushServicesForLocal
+from functions.startThread import startThread
 import time
-import threading
-
-def start_thread_if_needed(thread, target, args=None):
-    if thread is None or not thread.is_alive():
-        if args:
-            thread = threading.Thread(target=target, args=args)
-        else:
-            thread = threading.Thread(target=target)
-        thread.start()
-    return thread
 
 @click.command()
 @click.argument("url", required=False)
@@ -26,10 +17,10 @@ def start(url):
     while True:
         future_time = datetime.now() + timedelta(seconds=5)
         if url:
-            metrics_thread = start_thread_if_needed(metrics_thread, pushMetricsForURL, (url,))
+            metrics_thread = startThread(metrics_thread, pushMetricsForURL, (url,))
         else:
-            metrics_thread = start_thread_if_needed(metrics_thread, pushMetricsForLocal)
-            services_thread = start_thread_if_needed(services_thread, pushServicesForLocal)
+            metrics_thread = startThread(metrics_thread, pushMetricsForLocal)
+            services_thread = startThread(services_thread, pushServicesForLocal)
 
         while datetime.now() < future_time:
             time.sleep(1)

@@ -26,6 +26,7 @@
   <ItemGroup>
     <Compile Include="commands\start.py" />
     <Compile Include="functions\executeSQLQuery.py" />
+    <Compile Include="functions\startThread.py" />
     <Compile Include="functions\pushServicesForLocal.py" />
     <Compile Include="functions\pushMetricsForLocal.py" />
     <Compile Include="functions\pushMetricsForURL.py" />
