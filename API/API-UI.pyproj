@@ -30,7 +30,21 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="functions\module1.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="metric_modules.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="route\get_cpu_usage_history.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="route\set_metrics.py" />
+    <Compile Include="route\get_rsnap.py" />
+    <Compile Include="route\get_servers.py" />
+    <Compile Include="route\get_hostname.py" />
+    <Compile Include="route\get_metrics.py" />
+    <Compile Include="route\index.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="runserver.py">
@@ -38,6 +52,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="functions\" />
+    <Folder Include="route\" />
     <Folder Include="static\" />
     <Folder Include="static\content\" />
     <Folder Include="static\fonts\" />

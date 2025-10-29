@@ -1,10 +1,13 @@
-from datetime import datetime, timedelta
+
 import click
+import time
+
+from datetime import datetime, timedelta
+
 from functions.pushMetricsForURL import pushMetricsForURL
 from functions.pushMetricsForLocal import pushMetricsForLocal
 from functions.pushServicesForLocal import pushServicesForLocal
 from functions.startThread import startThread
-import time
 
 @click.command()
 @click.argument("url", required=False)

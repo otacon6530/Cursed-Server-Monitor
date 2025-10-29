@@ -3,192 +3,27 @@ from flask_cors import CORS
 import platform
 import pyodbc
 from metric_modules import get_cpu_usage, get_rsnapshots, get_uptime, get_all_services_status, get_service_status
+from functions.module1 import get_db_connection
+
+from route.get_cpu_usage_history import get_cpu_usage_history
+from route.index import index
+from route.get_metrics import get_metrics
+from route.set_metrics import set_metrics
+from route.get_servers import get_servers
+from route.get_hostname import get_hostname
+from route.get_rsnap import get_rsnap
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS
 
-#Need to move database configuration to a separate config file
-DB_CONFIG = {
-    'server': 'home.stephensdev.com',
-    'database': 'ServerMonitor',
-    'username': 'ServerMonitor',
-    'password': '*Server*Star*',
-    'driver': '{ODBC Driver 17 for SQL Server}',
-    'port': 1433
-}
-
-sql_server_drivers = [d for d in pyodbc.drivers() if "SQL Server" in d]
-if not sql_server_drivers:
-    raise RuntimeError("No SQL Server ODBC driver found. Please install one.")
-DB_CONFIG['driver'] = f'{{{sql_server_drivers[0]}}}'
-
-#Default Web App Page
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-def get_db_connection():
-    connection_string = (
-        f"DRIVER={DB_CONFIG['driver']};"
-        f"SERVER={DB_CONFIG['server']},{DB_CONFIG['port']};"
-        f"DATABASE={DB_CONFIG['database']};"
-        f"UID={DB_CONFIG['username']};"
-        f"PWD={DB_CONFIG['password']};"
-        "Encrypt=no;"
-    )
-    return pyodbc.connect(connection_string)
-
-@app.route('/api/metrics', methods=['GET'])
-def get_metrics():
-    server = request.args.get('server')
-    service_status = get_all_services_status()
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    print(f'Fetching metrics for server: {server}')
-    cursor.execute('EXECUTE [dbo].[GetServerMetrics] @server=?', (server,))
-    columns = [column[0] for column in cursor.description]
-    rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
-    conn.close();
-
-    if not rows:
-        data = {
-            'uptime': "",
-            'cpu_percent': -1,
-            'memory_percent': -1,
-            'disk_percent': -1,
-            'services': service_status,
-            'status': "pending",
-        }
-        # No rows returned
-        return jsonify(data)
-
-    data = {
-        'uptime': rows[0]['Uptime'],
-        'cpu_percent': rows[0]['CPUUsage'],
-        'memory_percent': rows[0]['RAMUsage'],
-        'disk_percent': rows[0]['DiskUsage'],
-        'services': service_status,
-        'status': rows[0]['Status'],
-    }
-    return jsonify(data)
-
-
-@app.route('/api/cpu-usage', methods=['GET'])
-def get_cpu_usage_history(limit=10):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(f'''
-        SELECT [InsertDate], UsagePerc
-        FROM log.CPU
-        ORDER BY [InsertDate] DESC
-        OFFSET 0 ROWS FETCH NEXT {limit} ROWS ONLY
-    ''')
-    rows = cursor.fetchall()
-    conn.close()
-
-    data = [
-        {
-            'timestamp': "", #row[0].strftime('%Y-%m-%d %H:%M:%S'),
-            'cpu_percent': row[1]
-        }
-        for row in rows
-    ]
-    return jsonify(data)
-
-@app.route('/api/get-servers', methods=['GET'])
-def get_servers():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute('SELECT [server] FROM dbo.server')
-    rows = cursor.fetchall()
-    conn.close()
-
-    # Convert to a list of server names
-    servers = [row[0] for row in rows]
-    return jsonify(servers)
-
-
-@app.route('/api/hostname', methods=['GET'])
-def get_hostname():
-    data = {
-        'hostname': platform.node(),
-    }
-    return jsonify(data)
-
-
-@app.route('/api/rsnap', methods=['GET'])
-def get_rsnap():
-    data = get_rsnapshots()
-    return jsonify(data)
-
-
-@app.route('/api/metrics', methods=['POST'])
-def set_metrics():
-    data = request.get_json()
-    if not isinstance(data, list):
-        return jsonify({'status': 'error', 'message': 'Payload must be a list of metric objects'}), 400
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    # Step 1: Ensure all servers exist
-    servers = set(record.get('server') for record in data if record.get('server'))
-    if not servers:
-        conn.close()
-        return jsonify({'status': 'error', 'message': 'No valid server names provided'}), 400
-
-    # Find existing servers
-    cursor.execute(
-        f"SELECT [Server] FROM [dbo].[Server] WHERE [Server] IN ({','.join(['?']*len(servers))})",
-        tuple(servers)
-    )
-    existing_servers = set(row[0] for row in cursor.fetchall())
-    missing_servers = servers - existing_servers
-
-    # Insert missing servers
-    if missing_servers:
-        cursor.executemany(
-            "INSERT INTO [dbo].[Server] ([Server]) VALUES (?)",
-            [(s,) for s in missing_servers]
-        )
-        conn.commit()
-
-    # Step 2: Fetch ServerIds for all servers
-    cursor.execute(
-        f"SELECT [Server], [ServerId] FROM [dbo].[Server] WHERE [Server] IN ({','.join(['?']*len(servers))})",
-        tuple(servers)
-    )
-    server_id_map = {row[0]: row[1] for row in cursor.fetchall()}
-
-    # Step 3: Prepare bulk insert data for [log].[Server]
-    bulk_metrics = []
-    for record in data:
-        server = record.get('server')
-        ram_usage = record.get('RAMUsage', -1)
-        cpu_usage = record.get('CPUUsage', -1)
-        disk_usage = record.get('DiskUsage', -1)
-        uptime = record.get('Uptime', '')
-        DateTime = record.get('DateTime', '')
-        server_id = server_id_map.get(server)
-        if server_id:
-            bulk_metrics.append((server_id, ram_usage, cpu_usage, disk_usage, DateTime))
-            # Update uptime for each server
-            cursor.execute(
-                "UPDATE [dbo].[Server] SET [Uptime] = ? WHERE [Server] = ?",
-                (uptime, server)
-            )
-
-    # Step 4: Bulk insert metrics
-    if bulk_metrics:
-        cursor.executemany(
-            "INSERT INTO [log].[Server] ([ServerId], [RAMUsage], [CPUUsage], [DiskUsage], [InsertDate]) VALUES (?, ?, ?, ?, ?)",
-            bulk_metrics
-        )
-
-    conn.commit()
-    conn.close()
-    return jsonify({'status': 'success'})
+#Add URL rules
+app.add_url_rule("/", view_func=index)
+app.add_url_rule('/api/metrics', view_func=get_metrics)
+app.add_url_rule('/api/cpu-usage', view_func=get_cpu_usage_history)
+app.add_url_rule('/api/get-servers', view_func=get_servers)
+app.add_url_rule('/api/hostname', view_func=get_hostname)
+app.add_url_rule('/api/rsnap', view_func=get_rsnap)
+app.add_url_rule('/api/metrics', view_func=set_metrics)
 
 
 if __name__ == '__main__':
