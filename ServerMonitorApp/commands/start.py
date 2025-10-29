@@ -6,6 +6,15 @@ from functions.pushServicesForLocal import pushServicesForLocal
 import time
 import threading
 
+def start_thread_if_needed(thread, target, args=None):
+    if thread is None or not thread.is_alive():
+        if args:
+            thread = threading.Thread(target=target, args=args)
+        else:
+            thread = threading.Thread(target=target)
+        thread.start()
+    return thread
+
 @click.command()
 @click.argument("url", required=False)
 def start(url):
@@ -17,16 +26,10 @@ def start(url):
     while True:
         future_time = datetime.now() + timedelta(seconds=5)
         if url:
-            if metrics_thread is None or not metrics_thread.is_alive():
-                metrics_thread = threading.Thread(target=pushMetricsForURL, args=(url,))
-                metrics_thread.start()
+            metrics_thread = start_thread_if_needed(metrics_thread, pushMetricsForURL, (url,))
         else:
-            if metrics_thread is None or not metrics_thread.is_alive():
-                metrics_thread = threading.Thread(target=pushMetricsForLocal)
-                metrics_thread.start()
+            metrics_thread = start_thread_if_needed(metrics_thread, pushMetricsForLocal)
+            services_thread = start_thread_if_needed(services_thread, pushServicesForLocal)
 
-            if services_thread is None or not services_thread.is_alive():
-                services_thread = threading.Thread(target=pushServicesForLocal)
-                services_thread.start()
         while datetime.now() < future_time:
             time.sleep(1)
