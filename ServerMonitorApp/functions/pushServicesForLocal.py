@@ -16,7 +16,6 @@ def pushServicesForLocal():
         )
         params = (server, service['name'], service['status'])
         executeSQLQuery(query, params)
-    if iteration >= 1:
-        print(f"Pushed services for server: {server}")
+    if iteration >= 3:
         time.sleep(55)
     iteration += 1

@@ -1,11 +1,7 @@
 from flask import Flask, jsonify, render_template, request
-import os
 from flask_cors import CORS
-import psutil
 import platform
-import subprocess
 import pyodbc
-import datetime
 from metric_modules import get_cpu_usage, get_rsnapshots, get_uptime, get_all_services_status, get_service_status
 
 app = Flask(__name__)
