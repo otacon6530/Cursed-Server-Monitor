@@ -1,7 +1,6 @@
 
         const APIServer = "http://localhost:5000";
 
-
         import { getServers } from './functions/getServers.js';
         let servers = [];
 
