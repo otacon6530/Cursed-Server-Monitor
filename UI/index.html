@@ -152,9 +152,10 @@
     <div class="board-container" id="board"></div>
 
     <script>
+        const APIServer = "http://localhost:5000";
 
         async function getServers() {
-            const response = await fetch("/api/get-servers");
+            const response = await fetch(APIServer +"/api/get-servers");
             servers = await response.json();
         }
         function refreshAllServerMetrics() {
@@ -162,7 +163,7 @@
         }
 
         async function renderServerBoxes() {
-            const response = await fetch("/api/get-servers");
+            const response = await fetch(APIServer +"/api/get-servers");
             const servers = await response.json();
             const container = document.querySelector(".board-container");
             container.innerHTML = ""; // Clear existing boxes
@@ -183,7 +184,7 @@
             let response;
             let data;
             try {
-                response = await fetch(`/api/metrics?server=${encodeURIComponent(server)}`);
+                response = await fetch(APIServer +`/api/metrics?server=${encodeURIComponent(server)}`);
                 data = await response.json();
             } catch (err) {
                 // Handle error if needed
@@ -368,7 +369,7 @@
             let servers = window.servers;
             if (!servers || !Array.isArray(servers) || servers.length === 0) {
                 try {
-                    const response = await fetch("/api/get-servers");
+                    const response = await fetch(APIServer + "/api/get-servers");
                     servers = await response.json();
                     window.servers = servers;
                 } catch (err) {

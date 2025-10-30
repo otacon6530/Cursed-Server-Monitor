@@ -21,3 +21,12 @@ subprocess.run([exe_path, "test"])
 
 # Run start command
 subprocess.run([exe_path, "start"])
+
+# Start HTTP server in UI folder
+ui_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "UI"))
+if not os.path.exists(ui_dir):
+    print(f"UI directory not found: {ui_dir}")
+    sys.exit(1)
+
+print(f"Starting HTTP server in {ui_dir} on port 5000...")
+subprocess.Popen([sys.executable, "-m", "http.server", "5000"], cwd=ui_dir)
