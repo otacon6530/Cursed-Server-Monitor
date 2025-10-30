@@ -1,170 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Server Metrics Dashboard</title>
-    <style>
-        body {
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #303030;
-            margin: 0;
-            padding: 0;
-            color: #fff;
-        }
 
-        .board-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 140px));
-            grid-auto-rows: 140px;
-            gap: 16px;
-            padding: 24px;
-            justify-content: center;
-            position: relative;
-            transition: all 0.2s;
-        }
-
-        .widget {
-            background: #181818;
-            border-radius: 8px;
-            box-sizing: border-box;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            padding: 12px;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            grid-column: span 1;
-            grid-row: span 1;
-            cursor: grab;
-            user-select: none;
-            transition: all 0.2s;
-        }
-
-            .widget.dragging {
-                opacity: 0.5;
-                z-index: 1000;
-            }
-
-            .widget.intersecting {
-                outline: 2px solid #d40000;
-            }
-
-        
-            .widget-header {
-                white-space: normal;
-                overflow-wrap: anywhere;
-                word-break: break-word;
-            }
-
-        .widget-remove {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            background: none;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            padding: 2px 8px;
-            opacity: 0.3; /* Make the button semi-transparent */
-            transition: opacity 0.2s;
-        }
-
-        #add-widget-btn {
-            margin: 24px auto 0 auto;
-            display: block;
-            background: #0078d4;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            padding: 10px 24px;
-            font-size: 1rem;
-            cursor: pointer;
-
-        }
-
-        .childbox {
-            background: #181818;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            border-radius: 8px;
-            border: 1px solid #333; /* optional: visual separation */
-        }
-
-        .active {
-            background: none;
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: #228B22;
-            vertical-align: middle;
-            margin-right: 8px;
-            margin-bottom: 3px;
-        }
-        .inactive {
-            background: none;
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: red;
-            vertical-align: middle;
-            margin-right: 8px;
-            margin-bottom: 3px;
-        }
-        .childcontainer {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 8px;
-            margin: 0px;
-        }
-
-        /* Responsive: abandon grid for small screens */
-        @media (max-width: 600px) {
-            .board-container {
-                display: flex;
-                flex-direction: column;
-                gap: 16px;
-                padding: 12px;
-            }
-
-            .widget {
-                width: 100%;
-                min-width: 0;
-                max-width: 100%;
-                height: auto;
-                grid-column: auto !important;
-                grid-row: auto !important;
-            }
-        }
-    </style>
-</head>
-<body>
-    <button id="add-widget-btn">Add Widget</button>
-    <div class="board-container" id="board"></div>
-
-    <script>
         const APIServer = "http://localhost:5000";
 
-        async function getServers() {
-            const response = await fetch(APIServer +"/api/get-servers");
-            servers = await response.json();
-        }
+        import { getServers } from './functions/getServers.js';
+
+        let servers = [];
         function refreshAllServerMetrics() {
             servers.forEach(server => loadMetricsForServer(server));
         }
 
         async function renderServerBoxes() {
             const response = await fetch(APIServer +"/api/get-servers");
-            const servers = await response.json();
+            servers = await response.json();
             const container = document.querySelector(".board-container");
             container.innerHTML = ""; // Clear existing boxes
 
@@ -212,11 +58,8 @@
 
             }
 
-            let servers;
-            getServers();
+            servers = getServers();
             setInterval(refreshAllServerMetrics, 5000); // Refresh every 5 seconds
-    </script>
-    <script>
         // Widget configuration stored in localStorage
         function getWidgetConfig() {
             return JSON.parse(localStorage.getItem('widgetBoardConfig') || '[]');
@@ -242,7 +85,7 @@
                 aRowEnd < bRowStart || aRowStart > bRowEnd);
         }
         function getWidgetTemplate(title, content, idx) {
-            temp = `
+            let temp = `
                         <strong><span id = "status-${title}-parent"></span><span>${title}</span><button class="widget-remove" title="Remove" onclick="removeWidget(${idx})">&times;</button></strong> <br />
                         <div class="childcontainer">
                             <div class="childbox" id="uptime-${title}-parent" >Uptime:<br /> <metric id="uptime-${title}"></metric></div>
@@ -440,6 +283,3 @@
                 }
             }, 150);
         });
-    </script>
-</body>
-</html>

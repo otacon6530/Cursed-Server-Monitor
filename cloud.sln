@@ -9,8 +9,6 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "API", "API\API.pyproj", "{0
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Client", "ServerMonitorApp\Client.pyproj", "{2A16BB24-B953-44C4-A920-B332AEF805E4}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "UI", "UI\UI.pyproj", "{EF4FFCE1-4B8A-4F47-9039-0A3483D0EA98}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,8 +27,6 @@ Global
 		{05FE84E3-7654-48DD-A142-2D4327302EA2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2A16BB24-B953-44C4-A920-B332AEF805E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A16BB24-B953-44C4-A920-B332AEF805E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EF4FFCE1-4B8A-4F47-9039-0A3483D0EA98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EF4FFCE1-4B8A-4F47-9039-0A3483D0EA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

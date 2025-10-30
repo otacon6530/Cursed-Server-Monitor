@@ -21,7 +21,7 @@
     <RootNamespace>API</RootNamespace>
     <InterpreterId>
     </InterpreterId>
-    <WebBrowserPort>8000</WebBrowserPort>
+    <WebBrowserPort>5000</WebBrowserPort>
     <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -51,10 +51,19 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="functions\" />
+    <Folder Include="static\" />
     <Folder Include="route\" />
+    <Folder Include="static\js\" />
+    <Folder Include="static\js\functions\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="static\js\functions\getServers.js" />
+    <Content Include="static\js\script.js" />
+    <Content Include="static\index.html" />
+    <Content Include="static\style.css">
+      <SubType>Code</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">

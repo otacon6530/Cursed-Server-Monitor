@@ -7,7 +7,7 @@ from route.get_servers import get_servers
 from route.get_hostname import get_hostname
 from route.get_rsnap import get_rsnap
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', static_folder='static')
 CORS(app)
 
 #Add URL rules
@@ -18,6 +18,10 @@ app.add_url_rule('/api/get-servers', view_func=get_servers, methods=['GET'])
 app.add_url_rule('/api/hostname', view_func=get_hostname, methods=['GET'])
 app.add_url_rule('/api/rsnap', view_func=get_rsnap, methods=['GET'])
 app.add_url_rule('/api/metrics', view_func=set_metrics, methods=['POST'])
+
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
