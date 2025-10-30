@@ -1,15 +1,12 @@
-from functions.module1 import get_db_connection
-from flask import Flask, jsonify, render_template, request
-import platform
-import pyodbc
-from metric_modules import get_cpu_usage, get_rsnapshots, get_uptime, get_all_services_status, get_service_status
+from functions.getDBConnection import getDBConnection
+from flask import jsonify, request
 
 def set_metrics():
     data = request.get_json()
     if not isinstance(data, list):
         return jsonify({'status': 'error', 'message': 'Payload must be a list of metric objects'}), 400
 
-    conn = get_db_connection()
+    conn = getDBConnection()
     cursor = conn.cursor()
 
     # Step 1: Ensure all servers exist

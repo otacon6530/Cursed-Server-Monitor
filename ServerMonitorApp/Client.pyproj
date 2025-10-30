@@ -5,7 +5,7 @@
     <ProjectGuid>2a16bb24-b953-44c4-a920-b332aef805e4</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>start.py</StartupFile>
+    <StartupFile>debug.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -36,8 +36,8 @@
     <Compile Include="functions\getDiskUsage.py" />
     <Compile Include="functions\getCPUUsage.py" />
     <Compile Include="functions\getRAMUsage.py" />
-    <Compile Include="servmon.py" />
-    <Compile Include="start.py" />
+    <Compile Include="run.py" />
+    <Compile Include="debug.py" />
     <Compile Include="commands\test.py" />
     <Compile Include="tests\test_ExecuteSQLQuery.py" />
     <Compile Include="tests\test_GetServicesWithStatus.py" />

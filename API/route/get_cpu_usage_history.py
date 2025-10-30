@@ -1,11 +1,8 @@
-from functions.module1 import get_db_connection
-from flask import Flask, jsonify, render_template, request
-import platform
-import pyodbc
-from metric_modules import get_cpu_usage, get_rsnapshots, get_uptime, get_all_services_status, get_service_status
+from functions.getDBConnection import getDBConnection
+from flask import jsonify
 
 def get_cpu_usage_history(limit=10):
-    conn = get_db_connection()
+    conn = getDBConnection()
     cursor = conn.cursor()
     cursor.execute(f'''
         SELECT [InsertDate], UsagePerc

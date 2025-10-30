@@ -1,2 +1,2 @@
 .\env\Scripts\Activate.ps1
-pyinstaller --onefile servmon.py
+pyinstaller --onefile run.py

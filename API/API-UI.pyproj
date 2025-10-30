@@ -8,7 +8,7 @@
     <ProjectHome>
     </ProjectHome>
     <ProjectTypeGuids>{789894c7-04a9-4a11-a6b5-3f4435165112};{1b580a1a-fdb3-4b32-83e1-6407eb2722e6};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
-    <StartupFile>runserver.py</StartupFile>
+    <StartupFile>run.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -30,10 +30,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="functions\module1.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="metric_modules.py">
+    <Compile Include="functions\getDBConnection.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="route\get_cpu_usage_history.py">
@@ -47,7 +44,7 @@
     <Compile Include="route\index.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="runserver.py">
+    <Compile Include="run.py">
       <Publish>False</Publish>
     </Compile>
   </ItemGroup>
@@ -84,7 +81,6 @@
     <Content Include="static\scripts\respond.js" />
     <Content Include="static\scripts\respond.min.js" />
     <Content Include="static\scripts\_references.js" />
-    <Content Include="templates\index2.html" />
     <Content Include="templates\index.html" />
   </ItemGroup>
   <ItemGroup>
