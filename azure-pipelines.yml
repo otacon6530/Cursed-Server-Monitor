@@ -1,0 +1,10 @@
+trigger: none  # Disable default CI triggers
+pr: none
+
+resources:
+  webhooks:
+    - webhook: myWebhook
+      connection: generic
+      filters:
+        - path: $.eventType
+          value: myCustomEvent
