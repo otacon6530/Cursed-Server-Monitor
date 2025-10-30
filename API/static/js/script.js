@@ -1,12 +1,22 @@
 
         const APIServer = "http://localhost:5000";
 
-        import { getServers } from './functions/getServers.js';
 
+        import { getServers } from './functions/getServers.js';
         let servers = [];
-        function refreshAllServerMetrics() {
+
+        async function refreshAllServerMetrics() {
+            servers = await getServers(); // getServers returns a Promise
             servers.forEach(server => loadMetricsForServer(server));
         }
+
+        async function initialize() {
+            servers = await getServers();
+            setInterval(refreshAllServerMetrics, 5000);
+            refreshAllServerMetrics();
+        }
+
+        initialize();
 
         async function renderServerBoxes() {
             const response = await fetch(APIServer +"/api/get-servers");
