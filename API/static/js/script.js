@@ -1,63 +1,61 @@
 // --- Imports ---
 import { refreshAllServerMetrics } from './functions/refreshAllServerMetrics.js';
 import { initialize } from './functions/initialize.js';
-import { removeWidget } from './functions/removeWidget.js';
 import { addWidget } from './functions/addWidget.js';
 import { renderBoard } from './functions/renderBoard.js';
 
-// --- Initialization ---
-try { 
-    initialize();
-} catch (err) {
-    console.error('Initialization failed:', err);
-}
+class Dashboard {
+    constructor() {
+        this.lastWidth = window.innerWidth;
+        this.lastHeight = window.innerHeight;
+        this.resizeTimeout = null;
+        this.initialize = initialize;
 
-// Expose only necessary functions globally
-window.removeWidget = removeWidget;
-
-// --- State ---
-let lastWidth = window.innerWidth;
-let lastHeight = window.innerHeight;
-let resizeTimeout;
-
-// --- Initial Render ---
-try {
-    renderBoard();
-} catch (err) {
-    console.error('Initial render failed:', err);
-}
-
-// --- Periodic Refresh ---
-setInterval(() => {
-    try {
-        refreshAllServerMetrics();
-    } catch (err) {
-        console.error('Metrics refresh failed:', err);
+        this.initialize();
+        this.setupEvents();
+        this.startPeriodicRefresh();
     }
-}, 5000);
 
-// --- Events ---
-document.getElementById('add-widget-btn').onclick = () => {
-    try {
-        addWidget();
-    } catch (err) {
-        console.error('Add widget failed:', err);
-    }
-};
-
-window.addEventListener('resize', function () {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(function () {
-        const widthChanged = window.innerWidth !== lastWidth;
-        const heightChanged = Math.abs(window.innerHeight - lastHeight) > 50;
-        if (widthChanged || heightChanged) {
-            lastWidth = window.innerWidth;
-            lastHeight = window.innerHeight;
+    startPeriodicRefresh() {
+        setInterval(() => {
             try {
-                renderBoard();
+                refreshAllServerMetrics();
             } catch (err) {
-                console.error('Render on resize failed:', err);
+                console.error('Metrics refresh failed:', err);
             }
+        }, 5000);
+    }
+
+    setupEvents() {
+        const addWidgetBtn = document.getElementById('add-widget-btn');
+        if (addWidgetBtn) {
+            addWidgetBtn.onclick = () => {
+                try {
+                    addWidget();
+                } catch (err) {
+                    console.error('Add widget failed:', err);
+                }
+            };
         }
-    }, 150);
-});
+
+        window.addEventListener('resize', () => {
+            clearTimeout(this.resizeTimeout);
+            this.resizeTimeout = setTimeout(() => {
+                const widthChanged = window.innerWidth !== this.lastWidth;
+                const heightChanged = Math.abs(window.innerHeight - this.lastHeight) > 50;
+                if (widthChanged || heightChanged) {
+                    this.lastWidth = window.innerWidth;
+                    this.lastHeight = window.innerHeight;
+                    try {
+                        renderBoard();
+                    } catch (err) {
+                        console.error('Render on resize failed:', err);
+                    }
+                }
+            }, 150);
+        });
+    }
+}
+
+// Instantiate the dashboard
+new Dashboard();
