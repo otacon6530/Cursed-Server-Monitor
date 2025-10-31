@@ -58,6 +58,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="static\js\functions\removeWidget.js" />
+    <Content Include="static\js\functions\getWidgetConfig.js" />
+    <Content Include="static\js\functions\getWidgetTemplate.js" />
+    <Content Include="static\js\functions\renderBoard.js" />
+    <Content Include="static\js\functions\addWidget.js" />
+    <Content Include="static\js\functions\widgetsIntersect.js" />
+    <Content Include="static\js\functions\saveWidgetConfig.js" />
+    <Content Include="static\js\functions\renderServerBoxes.js" />
+    <Content Include="static\js\functions\loadMetricsForServer.js" />
+    <Content Include="static\js\functions\initialize.js" />
+    <Content Include="static\js\functions\updateElement.js" />
+    <Content Include="static\js\functions\refreshAllServerMetrics.js" />
     <Content Include="static\js\functions\getServers.js" />
     <Content Include="static\js\script.js" />
     <Content Include="static\index.html" />
