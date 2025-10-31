@@ -4,6 +4,8 @@ import { getServers } from './getServers.js';
 import { renderBoard } from './renderBoard.js';
 import { removeWidget } from './removeWidget.js';
 
+
+
 export async function initialize() {
     window.servers = await getServers();
     setInterval(refreshAllServerMetrics, 5000);

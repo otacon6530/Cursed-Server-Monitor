@@ -1,10 +1,8 @@
-// --- Imports ---
-import { refreshAllServerMetrics } from './functions/refreshAllServerMetrics.js';
-import { initialize } from './functions/initialize.js';
-import { addWidget } from './functions/addWidget.js';
-import { renderBoard } from './functions/renderBoard.js';
-
-class Dashboard {
+import { refreshAllServerMetrics } from '../functions/refreshAllServerMetrics.js';
+import { initialize } from '../functions/initialize.js';
+import { addWidget } from '../functions/addWidget.js';
+import { renderBoard } from '../functions/renderBoard.js';
+export class Dashboard {
     constructor() {
         this.lastWidth = window.innerWidth;
         this.lastHeight = window.innerHeight;
@@ -56,6 +54,3 @@ class Dashboard {
         });
     }
 }
-
-// Instantiate the dashboard
-new Dashboard();

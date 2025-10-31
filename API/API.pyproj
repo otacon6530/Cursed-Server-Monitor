@@ -55,9 +55,11 @@
     <Folder Include="route\" />
     <Folder Include="static\js\" />
     <Folder Include="static\js\functions\" />
+    <Folder Include="static\js\classes\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
+    <Content Include="static\js\classes\dashboard.js" />
     <Content Include="static\js\functions\removeWidget.js" />
     <Content Include="static\js\functions\getWidgetConfig.js" />
     <Content Include="static\js\functions\getWidgetTemplate.js" />
@@ -71,7 +73,7 @@
     <Content Include="static\js\functions\updateElement.js" />
     <Content Include="static\js\functions\refreshAllServerMetrics.js" />
     <Content Include="static\js\functions\getServers.js" />
-    <Content Include="static\js\script.js" />
+    <Content Include="static\js\app.js" />
     <Content Include="static\index.html" />
     <Content Include="static\style.css">
       <SubType>Code</SubType>
