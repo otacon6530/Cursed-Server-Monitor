@@ -1,2 +1,2 @@
 import { Dashboard } from './classes/dashboard.js';
-new Dashboard();
+new Dashboard(document.body);
