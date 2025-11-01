@@ -11,7 +11,7 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(140px, 140px));
     grid-auto-rows: 140px;
     gap: 16px;
-    padding: 24px;
+    padding: 0;
     justify-content: center;
     position: relative;
     transition: all 0.2s;
@@ -66,17 +66,7 @@ body {
     transition: opacity 0.2s;
 }
 
-#add-widget-btn {
-    margin: 24px auto 0 auto;
-    display: block;
-    background: #0078d4;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 24px;
-    font-size: 1rem;
-    cursor: pointer;
-}
+
 
 .childbox {
     background: #181818;
@@ -138,4 +128,29 @@ body {
         grid-column: auto !important;
         grid-row: auto !important;
     }
+}
+
+#DashBoardMenu {
+    background: linear-gradient(90deg, #181818 0%, #303030 100%);
+    color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    padding: 4px 6px;
+    margin: 24px auto 24px auto; /* top, auto left/right, bottom */
+    font-weight: bold;
+    font-size: 1.1rem;
+    max-width: 900px; /* prevents stretching to screen edge */
+    width: 90%; /* responsive width */
+}
+
+#add-widget-btn {
+    margin: 0;
+    display: block;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-size: 1rem;
+    cursor: pointer;
+    background: none; /* Removes default background */
 }

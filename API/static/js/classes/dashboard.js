@@ -3,6 +3,7 @@ import { initialize } from '../functions/initialize.js';
 import { addWidget } from '../functions/addWidget.js';
 import { renderBoard } from '../functions/renderBoard.js';
 import { createElement } from '../functions/createElement.js';
+import { DashboardMenu } from '../classes/menu.js';
 export class Dashboard {
     constructor(parent) {
         this.lastWidth = window.innerWidth;
@@ -10,11 +11,9 @@ export class Dashboard {
         this.resizeTimeout = null;
         this.initialize = initialize;
 
-
-        createElement({ type: 'button', id: 'add-widget-btn', parent: document.body, content: 'Add Widget' });
-        this.div = createElement({ type: 'div', id: 'board', className: 'board-container', parent: parent });
-        this.menu = createElement({ type: 'div', id: 'DashBoardMenu', parent: this.div });
-        
+        this.container = createElement({ type: 'div', className: 'container', parent: parent });
+        this.menu = new DashboardMenu(this.container);
+        this.widgetContainer = createElement({ type: 'div', id: 'board', className: 'board-container', parent: parent });
         this.initialize();
         this.setupEvents();
         this.startPeriodicRefresh();
