@@ -1,2 +1,2 @@
-import { Dashboard } from './classes/dashboard.js';
-new Dashboard(document.body);
+import { App } from './classes/app.js';
+new App();

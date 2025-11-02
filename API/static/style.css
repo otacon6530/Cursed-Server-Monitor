@@ -141,6 +141,10 @@ body {
     font-size: 1.1rem;
     max-width: 900px; /* prevents stretching to screen edge */
     width: 90%; /* responsive width */
+    display: flex;
+    flex-direction: row; /* horizontal alignment */
+    align-items: center; /* vertical centering */
+    gap: 12px;           /* space between items */
 }
 
 #add-widget-btn {

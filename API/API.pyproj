@@ -66,7 +66,11 @@
   <ItemGroup>
     <Content Include="requirements.txt" />
     <Content Include="src\main\java\com\yourcompany\dashboard\DashboardMenu.java" />
+    <Content Include="static\js\classes\dashboard.old.js" />
+    <Content Include="static\js\classes\app.js" />
     <Content Include="static\js\classes\dashboard.js" />
+    <Content Include="static\js\classes\screen.js" />
+    <Content Include="static\js\classes\widget.js" />
     <Content Include="static\js\classes\popup.js" />
     <Content Include="static\js\classes\menu.js" />
     <Content Include="static\js\functions\createElement.js" />
