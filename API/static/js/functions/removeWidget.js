@@ -3,8 +3,6 @@ import { renderBoard } from './renderBoard.js';
 import { getWidgetConfig } from './getWidgetConfig.js';
 
 export function removeWidget(idx) {
-    const config = getWidgetConfig();
-    config.splice(idx, 1);
-    saveWidgetConfig(config);
+    saveWidgetConfig(getWidgetConfig().filter((_, i) => i !== idx));
     renderBoard();
 }

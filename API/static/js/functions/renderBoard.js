@@ -1,7 +1,7 @@
 import { getWidgetConfig } from './getWidgetConfig.js';
 import { loadMetricsForServer } from './loadMetricsForServer.js';
 import { saveWidgetConfig } from './saveWidgetConfig.js';
-import { getWidgetTemplate } from './getWidgetTemplate.js';
+//import { getWidgetTemplate } from './getWidgetTemplate.js';
 
 export function renderBoard() {
     const board = document.getElementById('board');
@@ -26,7 +26,7 @@ export function renderBoard() {
             widgetDiv.style.gridRow = 'auto';
         }
 
-        widgetDiv.innerHTML = getWidgetTemplate(widget.title, widget.content, idx);
+        //widgetDiv.innerHTML = getWidgetTemplate(widget.title, widget.content, idx);
         board.appendChild(widgetDiv);
         if (widget.server) {
             loadMetricsForServer(widget.server);

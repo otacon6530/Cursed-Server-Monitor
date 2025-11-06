@@ -1,6 +1,4 @@
 import { createElement } from '../functions/createElement.js';
-import { loadMetricsForServer } from '../functions/loadMetricsForServer.js';
-import { getWidgetTemplate } from '../functions/getWidgetTemplate.js';
 import { Widget } from './widget.js';
 
 export class Dashboard {
@@ -8,24 +6,17 @@ export class Dashboard {
         this.div = createElement({ type: 'div', id: 'board', className: 'board-container', parent });
 
         this.getWidgetConfig().forEach((widget, idx) => {
-            const widgetDiv = this.createWidgetDiv(widget, idx);
+            widget.idx = idx;
+            new Widget({
+                type: 'div',
+                className: 'widget',
+                dataset: { idx },
+                parent: this.div,
+                //innerHTML: getWidgetTemplate(widget.title, widget.content, idx),
+                draggable: true
+            }, widget);
         });
     }
-
-    createWidgetDiv(widget, idx) {
-        const widgetObj = new Widget({
-            type: 'div',
-            className: 'widget',
-            dataset: { idx },
-            parent: this.div,
-            innerHTML: getWidgetTemplate(widget.title, widget.content, idx),
-            draggable: true
-        }, widget);
-        widgetObj.refresh();
-        return widgetObj.el;
-    }
-
-    
 
     getWidgetConfig() {
         return JSON.parse(localStorage.getItem('widgetBoardConfig') || '[]');

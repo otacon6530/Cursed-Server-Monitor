@@ -76,7 +76,6 @@
     <Content Include="static\js\functions\createElement.js" />
     <Content Include="static\js\functions\removeWidget.js" />
     <Content Include="static\js\functions\getWidgetConfig.js" />
-    <Content Include="static\js\functions\getWidgetTemplate.js" />
     <Content Include="static\js\functions\renderBoard.js" />
     <Content Include="static\js\functions\addWidget.js" />
     <Content Include="static\js\functions\widgetsIntersect.js" />
