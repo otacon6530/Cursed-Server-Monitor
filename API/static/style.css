@@ -205,7 +205,7 @@ body {
 }
 
     .PopUp > * {
-        background: #181818;
+        background: rgba(18,18,18,1);
         padding: 32px 24px;
         width: 70vw;
         height: 70vh;
@@ -213,14 +213,14 @@ body {
         overflow: auto;
         border-radius: 8px;
         box-sizing: border-box;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 8px rgba(255,255,255,0.5);
     }
 
 .popup-close {
 
     position: absolute;
     top: 15vh;
-    right: 15vw;
+    right: 15.5vw;
     background: none;
     color: inherit;
     border: none;
