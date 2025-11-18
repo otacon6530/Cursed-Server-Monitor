@@ -4,8 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>405d6a52-b239-46bd-a4ae-f3c88819fdff</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -28,11 +27,15 @@
     <Compile Include="main.py" />
     <Compile Include="functions\receive_messages.py" />
     <Compile Include="functions\server_input_thread.py" />
-    <Compile Include="functions\start_client.py" />
+    <Compile Include="classes\start_client.py" />
+    <Compile Include="functions\print_header.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="functions\" />
     <Folder Include="classes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="requirements.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
