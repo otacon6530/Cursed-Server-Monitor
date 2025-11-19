@@ -1,26 +1,22 @@
 import socket
 import threading
-from classes.event_bus import EventBus
+from classes.time_event_manager import TimeEventManager
 from functions.server_input_thread import server_input_thread
 from functions.handle_client import handle_client
 from classes.header import Header
 
 class Window:
-    def __init__(self, host='0.0.0.0', port=65432, stdscr=None):
-        self.elements = []
-        self.time_events = []
-        self.event_bus = EventBus()
-
-
+    def __init__(self, args):
+        self.host = getattr(args, 'host', '0.0.0.0')
+        self.port = getattr(args, 'port', 65432)
+        self.stdscr = getattr(args, 'stdscr', None)
+        self.time_event_manager = TimeEventManager()
         self.shutdown_event = threading.Event()
         self.server_input_thread = server_input_thread
         self.handle_client = handle_client
-        self.host = host
-        self.port = port
-        self.stdscr = stdscr
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.input_thread = threading.Thread(target=self.server_input_thread, args=(self,), daemon=True)
-        self.header = Header(host, port)
+        self.header = Header(self.host, self.port)
         self.header.draw(self.stdscr)
     def start(self):
         self.input_thread.start()
@@ -31,6 +27,7 @@ class Window:
         try:
             while not self.shutdown_event.is_set():
                 self.socket.settimeout(1.0)  # So accept() doesn't block forever
+                self.time_event_manager.tick()
                 try:
                     conn, addr = self.socket.accept()
                     print(f"Connected by {addr}")

@@ -28,7 +28,6 @@
     <Compile Include="main.py" />
     <Compile Include="functions\receive_messages.py" />
     <Compile Include="functions\server_input_thread.py" />
-    <Compile Include="classes\client.py" />
     <Compile Include="classes\header.py" />
   </ItemGroup>
   <ItemGroup>
@@ -36,6 +35,7 @@
     <Folder Include="classes\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="classes\time_event_manager.py" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
