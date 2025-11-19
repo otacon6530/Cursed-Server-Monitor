@@ -1,8 +1,7 @@
 import argparse
 import curses
-from functions.print_header import print_header
-from classes.start_server import Server
-from classes.start_client import Client
+from classes.window import Window
+from classes.client import Client
 
 def main(stdscr):
     parser = argparse.ArgumentParser(description="Start server or client.")
@@ -11,7 +10,7 @@ def main(stdscr):
     parser.add_argument("--port", type=int, default=4536, help="Port (default: 4536)")
     args = parser.parse_args()
     if args.type == "server":
-        server = Server(args.host, args.port, stdscr)
+        server = Window(args.host, args.port, stdscr)
         server.start()
     else:
         client = Client(args.host, args.port)

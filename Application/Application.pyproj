@@ -21,14 +21,15 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="classes\start_server.py" />
+    <Compile Include="classes\event_bus.py" />
+    <Compile Include="classes\window.py" />
     <Compile Include="functions\broadcast_message.py" />
     <Compile Include="functions\handle_client.py" />
     <Compile Include="main.py" />
     <Compile Include="functions\receive_messages.py" />
     <Compile Include="functions\server_input_thread.py" />
-    <Compile Include="classes\start_client.py" />
-    <Compile Include="functions\print_header.py" />
+    <Compile Include="classes\client.py" />
+    <Compile Include="classes\header.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="functions\" />

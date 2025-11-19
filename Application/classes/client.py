@@ -16,7 +16,7 @@ class Client:
         self.recv_thread.start()
         try:
             while True:
-                msg = input("Enter message (or 'exit' to quit): ")
+                msg = input(">>")
                 if msg.lower() == 'exit':
                     break
                 self.socket.sendall(msg.encode())
