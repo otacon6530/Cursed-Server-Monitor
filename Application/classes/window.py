@@ -4,6 +4,12 @@ from classes.time_event_manager import TimeEventManager
 from functions.server_input_thread import server_input_thread
 from functions.handle_client import handle_client
 from classes.header import Header
+from classes.database import Database
+
+DB_CONFIG = {
+    'server': '(localdb)\\ProjectModels',
+    'database': 'ServerMonitor'
+}
 
 class Window:
     def __init__(self, args):
@@ -18,6 +24,10 @@ class Window:
         self.input_thread = threading.Thread(target=self.server_input_thread, args=(self,), daemon=True)
         self.header = Header(self.host, self.port)
         self.header.draw(self.stdscr)
+        self.database = Database(
+            server=DB_CONFIG['server'],
+            database=DB_CONFIG['database']
+        )
     def start(self):
         self.input_thread.start()
         self.socket.bind((self.host, self.port))
