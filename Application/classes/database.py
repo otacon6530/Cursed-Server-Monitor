@@ -77,3 +77,14 @@ class Database:
     def close(self):
         self.cursor.close()
         self.connection.close()
+
+    def insert_server_if_not_exists(self, server_name):
+        """
+        Inserts the server_name into dbo.server if it does not already exist.
+        """
+        self.cursor.execute(
+            "SELECT COUNT(*) FROM dbo.server WHERE server = ?", (server_name,)
+        )
+        exists = self.cursor.fetchone()[0]
+        if not exists:
+            self.insert("dbo.server", {"server": server_name})
