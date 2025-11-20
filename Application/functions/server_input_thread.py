@@ -28,6 +28,7 @@ def server_input_thread(server):
         prompt_row = min(len(messages), max_y - 2) + 1
         stdscr.addstr(prompt_row, 0, ">>")
         stdscr.clrtoeol()
+        stdscr.move(prompt_row, 3)  # Ensure cursor is after '>>'
         stdscr.refresh()
         msg = stdscr.getstr(prompt_row, 3).decode().strip()
         cmd = msg.lower()
