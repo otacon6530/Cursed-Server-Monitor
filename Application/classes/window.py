@@ -29,11 +29,13 @@ class Window:
         self.handle_client = handle_client
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.input_thread = threading.Thread(target=self.server_input_thread, args=(self,), daemon=True)
-        self.header = Header(self)
-        self.header.draw(self.stdscr)     
+        self.header = Header(self)  
         self.run_database_function(lambda db: db.insert_server_if_not_exists(self.name))
         self.metrics_thread = threading.Thread(target=self.metrics_worker, daemon=True)
-  
+        self.CPUUsage = 0
+        self.RAMUsage = 0
+        self.DiskUsage = 0  
+    
     def start(self):
         self.input_thread.start()
         self.metrics_thread.start()
@@ -43,7 +45,7 @@ class Window:
 
         try:
             while not self.shutdown_event.is_set():
-                self.header.draw(self.stdscr)
+                self.header.draw(self.stdscr, self)
                 self.socket.settimeout(1.0)  # So accept() doesn't block forever
                 self.time_event_manager.tick()
                 try:
@@ -70,10 +72,13 @@ class Window:
         Returns:
             A list of metrics.
         """
+        self.CPUUsage = getCPUUsage()
+        self.RAMUsage = getRAMUsage()
+        self.DiskUsage = getDiskUsage()
         row = {
-            "CPUUsage": getCPUUsage()
-          , "RAMUsage": getRAMUsage()
-          , "DiskUsage": getDiskUsage()
+            "CPUUsage": self.CPUUsage
+          , "RAMUsage": self.RAMUsage
+          , "DiskUsage": self.DiskUsage
         }
         return self.run_database_function(lambda db: db.insert_metrics(self.name, row))
 
