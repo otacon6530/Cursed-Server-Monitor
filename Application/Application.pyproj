@@ -28,6 +28,10 @@
     <Compile Include="classes\event_bus.py" />
     <Compile Include="classes\window.py" />
     <Compile Include="functions\broadcast_message.py" />
+    <Compile Include="functions\getCPUUsage.py" />
+    <Compile Include="functions\getDiskUsage.py" />
+    <Compile Include="functions\getRAMUsage.py" />
+    <Compile Include="functions\getUpTime.py" />
     <Compile Include="functions\get_server_name.py" />
     <Compile Include="functions\handle_client.py" />
     <Compile Include="functions\test_get_server_name.py" />

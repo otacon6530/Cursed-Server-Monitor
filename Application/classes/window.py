@@ -6,7 +6,11 @@ from functions.handle_client import handle_client
 from classes.header import Header
 from classes.database import Database
 from functions.get_server_name import get_computer_name
+from functions.getCPUUsage import getCPUUsage
+from functions.getDiskUsage import getDiskUsage
+from functions.getRAMUsage import getRAMUsage
 import os
+import time
 
 DB_CONFIG = {
     'server': '(localdb)\\ProjectModels',
@@ -28,16 +32,18 @@ class Window:
         self.header = Header(self)
         self.header.draw(self.stdscr)     
         self.run_database_function(lambda db: db.insert_server_if_not_exists(self.name))
+        self.metrics_thread = threading.Thread(target=self.metrics_worker, daemon=True)
   
     def start(self):
         self.input_thread.start()
+        self.metrics_thread.start()
         self.socket.bind((self.host, self.port))
         self.socket.listen()
         print(f"Server listening on {self.host}:{self.port}")
 
         try:
             while not self.shutdown_event.is_set():
-                self.header.draw(self.stdscr)  
+                self.header.draw(self.stdscr)
                 self.socket.settimeout(1.0)  # So accept() doesn't block forever
                 self.time_event_manager.tick()
                 try:
@@ -50,7 +56,26 @@ class Window:
                 except socket.timeout:
                     continue
         finally:
+            self.shutdown_event.set()
             self.socket.close()
+
+    def metrics_worker(self):
+        while not self.shutdown_event.is_set():
+            self.save_metrics()
+            time.sleep(5)
+
+    def save_metrics(self):
+        """
+        Retrieves metrics from the database for this server.
+        Returns:
+            A list of metrics.
+        """
+        row = {
+            "CPUUsage": getCPUUsage()
+          , "RAMUsage": getRAMUsage()
+          , "DiskUsage": getDiskUsage()
+        }
+        return self.run_database_function(lambda db: db.insert_metrics(self.name, row))
 
     def run_database_function(self, db_func, *args, **kwargs):
         """
