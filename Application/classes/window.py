@@ -11,6 +11,7 @@ from functions.getDiskUsage import getDiskUsage
 from functions.getRAMUsage import getRAMUsage
 import os
 import time
+from classes.event_bus import event_bus
 
 DB_CONFIG = {
     'server': '(localdb)\\ProjectModels',
@@ -18,7 +19,10 @@ DB_CONFIG = {
 }
 
 class Window:
+   
+
     def __init__(self, args):
+        event_bus.subscribe("update_database_status", self.update_database_status)
         self.DBActive = False
         self.host = getattr(args, 'host', '0.0.0.0')
         self.port = getattr(args, 'port', 65432)
@@ -99,6 +103,9 @@ class Window:
         finally:
             db.close()
         return result
+
+    def update_database_status(self, status):
+        self.DBActive = status
 
 if os.name == 'nt':
     import ctypes

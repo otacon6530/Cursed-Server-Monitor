@@ -14,3 +14,4 @@ class EventBus:
     def publish(self, event_type, data=None):
         for callback in self._subscribers.get(event_type, []):
             callback(data)
+event_bus = EventBus()

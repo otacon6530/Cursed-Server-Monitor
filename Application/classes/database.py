@@ -1,5 +1,6 @@
 import pyodbc
 import sqlite3
+from classes.event_bus import event_bus
 
 class Database:
     def __init__(self, server, database, username=None, password=None, sqlite_path="local.db"):
@@ -19,12 +20,14 @@ class Database:
                 )
             self.connection = pyodbc.connect(self.conn_str, timeout=3)
             self.cursor = self.connection.cursor()
+            event_bus.publish("update_database_status", True)
         except Exception as ex:
             print("SQL Server unavailable, switching to SQLite:", ex)
             self.use_sqlite = True
             self.connection = sqlite3.connect(sqlite_path)
             self.cursor = self.connection.cursor()
             self._ensure_sqlite_schema()
+            event_bus.publish("update_database_status", False)
 
     def _ensure_sqlite_schema(self):
         # Create tables if they don't exist (example schema, adjust as needed)
