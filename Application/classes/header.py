@@ -9,10 +9,13 @@ class Header:
 
     def draw(self, stdscr, window):
         self.it += 1
+        dbactive = "Disconnected"
+        if window.DBActive:
+            dbactive = "Connected"
         max_y, max_x = stdscr.getmaxyx()
         curses.resize_term(max_y, max_x)
         menu = f"{self.name}({self.host}:{self.port}) CPU:{window.CPUUsage:05.1f}%  Ram:{window.RAMUsage:05.1f}%  Disk:{window.DiskUsage:05.1f}%  "
-        host_port = f"tick:{self.it} "
+        host_port = f"Database:{dbactive} tick:{self.it} "
         host_port_x = max_x - len(host_port) 
         if host_port_x > len(menu):
             middle = " " * (host_port_x - len(menu))

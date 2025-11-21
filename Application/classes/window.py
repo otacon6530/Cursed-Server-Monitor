@@ -19,6 +19,7 @@ DB_CONFIG = {
 
 class Window:
     def __init__(self, args):
+        self.DBActive = False
         self.host = getattr(args, 'host', '0.0.0.0')
         self.port = getattr(args, 'port', 65432)
         self.name = get_computer_name()
