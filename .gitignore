@@ -364,3 +364,6 @@ FodyWeavers.xsd
 dist/
 build/
 build/servmon/
+
+.sonar
+/Application/env
