@@ -13,7 +13,7 @@
     <RootNamespace>Application</RootNamespace>
     <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>--test</CommandLineArguments>
+    <CommandLineArguments>--test -vvv</CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -25,8 +25,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="classes\abstract\application.py" />
+    <Compile Include="classes\client.py" />
     <Compile Include="classes\event_bus.py" />
-    <Compile Include="classes\window.py" />
+    <Compile Include="classes\logger.py" />
+    <Compile Include="classes\logger_test_result.py" />
+    <Compile Include="classes\server.py" />
     <Compile Include="functions\broadcast_message.py" />
     <Compile Include="functions\getCPUUsage.py" />
     <Compile Include="functions\getDiskUsage.py" />
@@ -41,6 +45,7 @@
     <Compile Include="classes\header.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="classes\abstract\" />
     <Folder Include="functions\" />
     <Folder Include="classes\" />
   </ItemGroup>

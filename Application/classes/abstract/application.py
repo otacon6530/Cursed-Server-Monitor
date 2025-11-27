@@ -18,21 +18,26 @@ DB_CONFIG = {
     'database': 'ServerMonitor'
 }
 
-class Window:
-   
-
+class Application:
     def __init__(self, args):
         event_bus.subscribe("update_database_status", self.update_database_status)
         self.DBActive = False
         self.host = getattr(args, 'host', '0.0.0.0')
         self.port = getattr(args, 'port', 65432)
+        # Only connect if this is a client
+        if getattr(args, 'type', 'server') == 'client':
+            try:
+                self.connect_to_server(self.host, self.port)
+            except ConnectionError as e:
+                print(f"[Client] {e}")
+                # Optionally: set a flag, retry, or exit gracefully
+                # sys.exit(1)  # Uncomment to exit if connection fails
         self.name = get_computer_name()
         self.stdscr = getattr(args, 'stdscr', None)
         self.time_event_manager = TimeEventManager()
         self.shutdown_event = threading.Event()
         self.server_input_thread = server_input_thread
         self.handle_client = handle_client
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.input_thread = threading.Thread(target=self.server_input_thread, args=(self,), daemon=True)
         self.header = Header(self)  
         self.run_database_function(lambda db: db.insert_server_if_not_exists(self.name))
@@ -40,6 +45,11 @@ class Window:
         self.CPUUsage = 0
         self.RAMUsage = 0
         self.DiskUsage = 0  
+
+        # Only create the socket if running as server
+        self.socket = None
+        if getattr(args, 'type', 'server') == 'server':
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
     def start(self):
         self.input_thread.start()
@@ -106,6 +116,31 @@ class Window:
 
     def update_database_status(self, status):
         self.DBActive = status
+
+    def connect_to_server(self, host, port, timeout=5):
+        """
+        Connects to a server via TCP socket.
+
+        Args:
+            host (str): The server's hostname or IP address.
+            port (int): The server's port number.
+            timeout (int, optional): Connection timeout in seconds. Default is 5.
+
+        Returns:
+            socket.socket: The connected socket object.
+
+        Raises:
+            ConnectionError: If the connection fails.
+        """
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(timeout)
+        try:
+            s.connect((host, port))
+            print(f"Connected to server at {host}:{port}")
+            return s
+        except Exception as e:
+            s.close()
+            raise ConnectionError(f"Could not connect to {host}:{port} - {e}")
 
 if os.name == 'nt':
     import ctypes
