@@ -2,7 +2,6 @@ import socket
 import threading
 from classes.time_event_manager import TimeEventManager
 from functions.server_input_thread import server_input_thread
-from functions.handle_client import handle_client
 from classes.header import Header
 from classes.database import Database
 from functions.get_server_name import get_computer_name
@@ -20,43 +19,43 @@ DB_CONFIG = {
 
 class Application:
     def __init__(self, args):
-        event_bus.subscribe("update_database_status", self.update_database_status)
-        self.DBActive = False
-        self.host = getattr(args, 'host', '0.0.0.0')
-        self.port = getattr(args, 'port', 65432)
-        # Only connect if this is a client
-        if getattr(args, 'type', 'server') == 'client':
-            try:
-                self.connect_to_server(self.host, self.port)
-            except ConnectionError as e:
-                print(f"[Client] {e}")
-                # Optionally: set a flag, retry, or exit gracefully
-                # sys.exit(1)  # Uncomment to exit if connection fails
-        self.name = get_computer_name()
-        self.stdscr = getattr(args, 'stdscr', None)
-        self.time_event_manager = TimeEventManager()
-        self.shutdown_event = threading.Event()
+        # import functions
         self.server_input_thread = server_input_thread
-        self.handle_client = handle_client
-        self.input_thread = threading.Thread(target=self.server_input_thread, args=(self,), daemon=True)
-        self.header = Header(self)  
-        self.run_database_function(lambda db: db.insert_server_if_not_exists(self.name))
-        self.metrics_thread = threading.Thread(target=self.metrics_worker, daemon=True)
+        self.event_bus = event_bus
+
+        # Initialize default values
         self.CPUUsage = 0
         self.RAMUsage = 0
         self.DiskUsage = 0  
+        self.DBActive = False
 
-        # Only create the socket if running as server
-        self.socket = None
-        if getattr(args, 'type', 'server') == 'server':
-            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #Initialize variables from args
+        self.logger = args.logger
+        self.host = getattr(args, 'host', '0.0.0.0')
+        self.port = getattr(args, 'port', 65432)
+        self.stdscr = getattr(args, 'stdscr', None)
+
+        #Initialize variables from functions
+        self.name = get_computer_name()
+
+        #Initialize objects
+        self.time_event_manager = TimeEventManager()
+        self.shutdown_event = threading.Event()
+        self.input_thread = threading.Thread(target=self.server_input_thread, args=(self,), daemon=True)
+        self.metrics_thread = threading.Thread(target=self.metrics_worker, daemon=True)
+        self.header = Header(self) 
+        self.run_database_function(lambda db: db.insert_server_if_not_exists(self.name))
+        
+        #Register event listeners
+        event_bus.subscribe("update_database_status", self.update_database_status)
+        
     
     def start(self):
         self.input_thread.start()
         self.metrics_thread.start()
         self.socket.bind((self.host, self.port))
         self.socket.listen()
-        print(f"Server listening on {self.host}:{self.port}")
+        self.logger.info(f"Server listening on {self.host}:{self.port}")
 
         try:
             while not self.shutdown_event.is_set():
@@ -65,10 +64,9 @@ class Application:
                 self.time_event_manager.tick()
                 try:
                     conn, addr = self.socket.accept()
-                    print(f"Connected by {addr}")
+                    self.logger.info(f"Connected by {addr}")
                     client_thread = threading.Thread(target=self.handle_client, args=(conn, addr), daemon=True)
                     client_thread.start()
-                    # Example: publish an event when a client connects
                     self.event_bus.publish("client_connected", addr)
                 except socket.timeout:
                     continue
@@ -136,11 +134,12 @@ class Application:
         s.settimeout(timeout)
         try:
             s.connect((host, port))
-            print(f"Connected to server at {host}:{port}")
+            self.logger.info(f"Connected to server at {host}:{port}")
             return s
         except Exception as e:
             s.close()
-            raise ConnectionError(f"Could not connect to {host}:{port} - {e}")
+            self.logger.error(f"Failed to connect to server at {host}:{port} - {e}")
+            raise ConnectionError(f"Failed to connect to server at {host}:{port} - {e}")
 
 if os.name == 'nt':
     import ctypes

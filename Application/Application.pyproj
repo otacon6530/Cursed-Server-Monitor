@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>405d6a52-b239-46bd-a4ae-f3c88819fdff</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>main.py</StartupFile>
+    <StartupFile>debug.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -13,8 +13,10 @@
     <RootNamespace>Application</RootNamespace>
     <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <CommandLineArguments>--test -vvv</CommandLineArguments>
+    <CommandLineArguments>
+    </CommandLineArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +33,7 @@
     <Compile Include="classes\logger.py" />
     <Compile Include="classes\logger_test_result.py" />
     <Compile Include="classes\server.py" />
+    <Compile Include="debug.py" />
     <Compile Include="functions\broadcast_message.py" />
     <Compile Include="functions\getCPUUsage.py" />
     <Compile Include="functions\getDiskUsage.py" />
